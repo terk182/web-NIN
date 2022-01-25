@@ -20,14 +20,14 @@ namespace web_NIN.Services
                 SqlCommand command;
 
 
-                sql = "insert into dbo.nin_assign (create_date, create_time, create_operator_name, operatorID,custommerID,customer_name,phone,status ) values ";
+                sql = "insert into dbo.nin_assign ( create_operator_name, operatorID,custommerID,customer_name,phone,status ) values ";
                 
 
                 var sql_value = "";
                 for (int i = 0; i < data_model.Count; i++)
                 {
-                    sql_value += ",('"+DateTime.Now.ToString("yyyy-MM-dd")+"',";
-                    sql_value += "'" + DateTime.Now.ToString("HH:mm:ss") + "',";
+                    //sql_value += ",('"+DateTime.Now.ToString("yyyy-MM-dd")+"',";
+                    //sql_value += "'" + DateTime.Now.ToString("HH:mm:ss") + "',";
                     sql_value += "'" + data_model[i].create_operator_name + "',";
                     sql_value += "'" + data_model[i].operatorID + "',";
                     sql_value += "'" + data_model[i].custommerID + "',";

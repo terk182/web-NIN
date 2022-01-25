@@ -20,11 +20,10 @@ namespace web_NIN.Services
                 SqlCommand command;
 
 
-                sql = @"insert into dbo.nin_agent (create_date, create_time, create_operator_name, operatorName)
-                       values (@create_date, @create_time, @create_operator_name, @operatorName)";
+                sql = @"insert into dbo.nin_agent ( create_operator_name, operatorName)
+                       values ( @create_operator_name, @operatorName)";
                 command = new SqlCommand(sql, sqlconn);
-                command.Parameters.AddWithValue("@create_date", DateTime.Now.ToString("yyyy-MM-dd"));
-                command.Parameters.AddWithValue("@create_time", DateTime.Now.ToString("HH:mm:ss"));
+
                 command.Parameters.AddWithValue("@create_operator_name", Agent_model.create_operator_name);
                 command.Parameters.AddWithValue("@operatorName", Agent_model.operatorName);
  

@@ -21,11 +21,11 @@ namespace web_NIN.Services
                 SqlCommand command;
                
 
-                sql = @"insert into dbo.nin_survey_log (create_date, create_time, create_operator_name, create_operator_id, operatorID, custommerID, acton,status,datail,numberOfRepeat)
-                       values (@create_date, @create_time, @create_operator_name, @create_operator_id, @operatorID, @custommerID, @acton, @status, @datail, @numberOfRepeat)";
+                sql = @"insert into dbo.nin_survey_log ( create_operator_name, create_operator_id, operatorID, custommerID, acton,status,datail,numberOfRepeat)
+                       values ( @create_operator_name, @create_operator_id, @operatorID, @custommerID, @acton, @status, @datail, @numberOfRepeat)";
                 command = new SqlCommand(sql, sqlconn);
-                command.Parameters.AddWithValue("@create_date", DateTime.Now.ToString("yyyy-MM-dd"));
-                command.Parameters.AddWithValue("@create_time", DateTime.Now.ToString("HH:mm:ss"));
+                //command.Parameters.AddWithValue("@create_date", DateTime.Now.ToString("yyyy-MM-dd"));
+                //command.Parameters.AddWithValue("@create_time", DateTime.Now.ToString("HH:mm:ss"));
                 command.Parameters.AddWithValue("@create_operator_name", Logmodel.operatorID);
                 command.Parameters.AddWithValue("@create_operator_id", "");
                 command.Parameters.AddWithValue("@operatorID", Logmodel.operatorID);

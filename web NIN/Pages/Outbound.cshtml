@@ -33,7 +33,7 @@
                 <option value="select">เลือกสถานะการติดต่อ</option>
                 @foreach (var std in (IEnumerable<Status_call_model>)ViewData["status_call"])
                 {
-                <option value="@std.eng_status">@std.thai_status</option>
+                    <option value="@std.eng_status">@std.thai_status</option>
                 }
 
             </select>
@@ -114,8 +114,8 @@
                 var check = ViewData["Child_age"];
                 if (string.IsNullOrEmpty(check.ToString()))
                 {
-                <br />
-                <button type="button" class="btn btn-info" onclick="age_check()">คำนวนอายุ</button>
+                    <br />
+                    <button type="button" class="btn btn-info" onclick="age_check()">คำนวนอายุ</button>
                 }
             }
         </div>
@@ -151,7 +151,7 @@
                         <option value="select">เลือกสถานะคุณแม่</option>
                         @foreach (var std in (IEnumerable<maternity_status_model>)ViewData["maternity"])
                         {
-                        <option value="@std.thai_status">@std.thai_status</option>
+                            <option value="@std.thai_status">@std.thai_status</option>
                         }
 
                     </select>
@@ -237,6 +237,7 @@
                     </label>
                 </div>
                 <select class="custom-select form-control-borde tk_inputr" id="twin" onchange="twin()" style="display: none;">
+                    <option value="0">--เลือกขข</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -431,7 +432,7 @@
                 <option value="select">เลือกสถานะคุณแม่</option>
                 @foreach (var std in (IEnumerable<Status_call_model>)ViewData["type_of_milk"])
                 {
-                <option value="@std.thai_status">@std.thai_status</option>
+                    <option value="@std.thai_status">@std.thai_status</option>
                 }
             </select>
         </div>
@@ -443,7 +444,7 @@
                 <option value="select">-เลือก-</option>
                 @foreach (var std in (IEnumerable<Status_call_model>)ViewData["brand_of_milk"])
                 {
-                <option value="@std.eng_status">@std.thai_status</option>
+                    <option value="@std.eng_status">@std.thai_status</option>
                 }
 
             </select>
@@ -480,7 +481,7 @@
                 <option value="select">-เลือก-</option>
                 @foreach (var std in (IEnumerable<Status_call_model>)ViewData["type_of_worried"])
                 {
-                <option value="@std.thai_status">@std.thai_status</option>
+                    <option value="@std.thai_status">@std.thai_status</option>
                 }
 
             </select>
@@ -516,7 +517,7 @@
                 <option value="select">-เลือก-</option>
                 @foreach (var std in (IEnumerable<Status_call_model>)ViewData["type_problem"])
                 {
-                <option value="@std.thai_status">@std.thai_status</option>
+                    <option value="@std.thai_status">@std.thai_status</option>
                 }
 
             </select>
@@ -779,7 +780,7 @@
                                 <option value="select">-เลือก-</option>
                                 @foreach (var std in (IEnumerable<provinces_model>)ViewData["provinces"])
                                 {
-                                <option value="@std.id">@std.name_th</option>
+                                    <option value="@std.id">@std.name_th</option>
                                 }
 
                             </select>
@@ -854,7 +855,7 @@
                                 <option value="select">-เลือก-</option>
                                 @foreach (var std in (IEnumerable<Status_call_model>)ViewData["cancel_data"])
                                 {
-                                <option value="@std.thai_status">@std.thai_status</option>
+                                    <option value="@std.thai_status">@std.thai_status</option>
                                 }
 
                             </select>
@@ -1048,6 +1049,9 @@
 <p id="as_status" hidden></p>
 <p id="as_num" hidden></p>
 <p id="as_num_t" hidden></p>
+
+
+<p id="save_st" hidden>true</p>
 @section scripts{
     <script>
 
@@ -1316,6 +1320,9 @@
                 // code block
             }
         }
+
+
+
         function status_call() {
 
             //-----------action-----------------------------
@@ -2661,6 +2668,8 @@
         }
 
 
+
+
         function record_result() {
             let replace = document.getElementById("replace").innerHTML;
             let cus_id = document.getElementById("result_cus_id").innerHTML;
@@ -2694,6 +2703,10 @@
             let as_status = document.getElementById("as_status").innerHTML;
             let as_num = document.getElementById("as_num").innerHTML;
             let as_num_t = document.getElementById("as_num_t").innerHTML;
+
+            let save_st = document.getElementById("save_st");
+
+
             if (result_gender_y != "0" || as_num_t == "4") {
                 let result;
                 let header;
@@ -2746,7 +2759,7 @@
 
 
                 ]
-                
+
                 let insert_mom_arr_h = [
                     'create_operator_name',
                     'status',
@@ -2874,51 +2887,58 @@
                     alert("กรุณารอกข้อมูล");
                 }
                 else {
-                    $.ajax({
-                        type: 'GET',
-                        url: "/Outbound?handler=Update",
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        data: {
-                            table: "nin_result_record",
-                            header: command_h,
-                            value: command_v,
-                            customer: cus_id,
-                            replace: replace,
-                            status: as_status,
-                            upd: command_update
-                        },
-                        beforeSend: function (xhr) {
-                            xhr.setRequestHeader("XSRF-TOKEN",
-                                $('input:hidden[name="__RequestVerificationToken"]').val());
-                        },
-                        success: function (datas) {
-                            console.log(datas);
-                            //-----------------------------------------------
-                            Swal.fire({
-                                icon: 'success',
-                                html: "<h3 style='color:#FFFFF0'>บันทึกสำเร็จ</h3>",
-                                background: '#85C1E9',
-                                showConfirmButton: false,
-                                timer: 2000,
-                                allowOutsideClick: false
-                            });
 
-                            setTimeout(function () {
-                                window.location.href = "Main";
-                            }, 1500);
+                    if (save_st.innerHTML == "true") {
+                        save_st.innerHTML = "false";
+                        $.ajax({
+                            type: 'GET',
+                            url: "/Outbound?handler=Update",
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            data: {
+                                table: "nin_result_record",
+                                header: command_h,
+                                value: command_v,
+                                customer: cus_id,
+                                replace: replace,
+                                status: as_status,
+                                upd: command_update
+                            },
+                            beforeSend: function (xhr) {
+                                xhr.setRequestHeader("XSRF-TOKEN",
+                                    $('input:hidden[name="__RequestVerificationToken"]').val());
+                            },
+                            success: function (datas) {
+                                console.log(datas);
+                                //-----------------------------------------------
+                                Swal.fire({
+                                    icon: 'success',
+                                    html: "<h3 style='color:#FFFFF0'>บันทึกสำเร็จ</h3>",
+                                    background: '#85C1E9',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    allowOutsideClick: false
+                                });
 
-
-
-
-                            //----------------------------terk--------------------------------
-
-                            // alert("บันทึกข้อมูลสำเร็จ")
+                                setTimeout(function () {
+                                    bt_toggle = true;
+                                    window.location.href = "Main";
+                                }, 1500);
 
 
-                        }
 
-                    });
+
+                                //----------------------------terk--------------------------------
+
+                                // alert("บันทึกข้อมูลสำเร็จ")
+
+
+                            }
+
+                        });
+                    }
+
+
                 }
             }
             else {
@@ -3100,7 +3120,7 @@
                 for (i = 0; i < boxxxx.length; i++) {
                     boxxx = document.getElementById(boxxxx[i]);
                     boxxx.style.display = "none";
-                  
+
                 }
 
 
@@ -3206,7 +3226,7 @@
                 'sub_crad2',
                 'sub_crad3',
                 'sub_crad4',
-              
+
 
 
             ];
@@ -3223,7 +3243,7 @@
             for (i = 0; i < boxxxxx.length; i++) {
                 boxxx1 = document.getElementById(boxxxxx[i]);
                 boxxx1.style.display = "none";
-               
+
             }
             for (i = 0; i < num_twin; i++) {
                 boxxx1 = document.getElementById(boxxxxx[i]);

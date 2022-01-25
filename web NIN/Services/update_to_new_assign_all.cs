@@ -18,11 +18,13 @@ namespace web_NIN.Services
 
                 var sql = "";
                 SqlCommand command;
-                var date_ = DateTime.Now.ToString("yyyy-MM-dd");
-                var time_ = DateTime.Now.ToString("HH:mm:ss");
+                //var date_ = DateTime.Now.ToString("yyyy-MM-dd");
+                //var time_ = DateTime.Now.ToString("HH:mm:ss");
 
                 //sql = "insert into dbo.nin_assign (create_date, create_time, create_operator_name, operatorID,custommerID,customer_name,phone,status ) values ";
-                sql = "update dbo.nin_assign SET  update_date = '" + date_ + "', update_time = '" + time_ + "', update_operator_name = '" + data_model[0].create_operator_name + "', operatorID = ";
+                // sql = "update dbo.nin_assign SET  update_date = '" + date_ + "', update_time = '" + time_ + "', update_operator_name = '" + data_model[0].create_operator_name + "', operatorID = ";
+                 sql = "update dbo.nin_assign SET update_operator_name = '" + data_model[0].create_operator_name + "', operatorID = ";
+                sql += data_model[0].operatorID;
                 sql += data_model[0].operatorID;
                 sql += " where custommerID IN";
 
