@@ -1,0 +1,121 @@
+﻿@page
+@using web_NIN.Models
+@model IndexModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login Page</title>
+
+    <link rel="icon" type="image/x-icon" href="~/src/logo.jpg">
+
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/css/lnr-icon.css" rel="stylesheet" />
+
+
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+
+
+    <link href="~/css/style.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="inner-wrapper login-body">
+        <div class="login-wrapper">
+            <div class="container">
+                <div class="loginbox shadow-sm">
+                    <div class="login-left" style="background-color:antiquewhite">
+                        @*<img class="img-fluid" src="assets/img/logo.png" alt="Logo">*@
+                        <img src="~/src/logo.jpg" id="icon" alt="User Icon" height="200" />
+
+                    </div>
+                    <div class="login-right">
+                        <div class="login-right-wrap">
+                            <h1>Login</h1>
+                            <form method="post">
+                                <div class="form-group">
+                                    <input type="text" asp-for="_Credential.username" class="form-control" placeholder="User name">
+                                    <span class="text-danger" asp-validation-for="_Credential.username"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" asp-for="_Credential.password" class="form-control" placeholder="password">
+                                    <span class="text-danger" asp-validation-for="_Credential.password"></span>
+                                </div>
+                                <div class="form-group">
+                                    <select class="custom-select form-control-border" id="select_type" onchange="get_type()" style="text-align: center;">
+                                        <option value="agant">agent</option>
+                                        <option value="admin">admin</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <input class="btn btn-theme button-1 text-white ctm-border-radius btn-block" type="submit" value="Login">
+                                    <input type="text" asp-for="_Credential.type" class="form-control" style="text-align: center;" id="type" hidden>
+                                </div>
+                            </form>
+
+                            <div class="text-center forgotpass"><a href="#">Version 1.002</a></div>
+                            <div class="login-or">
+                                <span class="or-line"></span>
+                                <span class="span-or" hi>or</span>
+                            </div>
+
+                            <div class="social-login" hidden>
+                                <span>Version 1.001</span>
+                                <h1>@ViewData["result"]</h1>
+                                <h1>@ViewData["count"]</h1>
+                                <a href="javascript:void(0)" class="facebook"><i class="fa fa-facebook"></i></a><a href="javascript:void(0)" class="google"><i class="fa fa-google"></i></a>
+                            </div>
+
+                            <div class="text-center dont-have" hidden>Don’t have an account? <a href="register.html" hidden>Register</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="assets/js/jquery-3.2.1.min.js"></script>
+
+    <script src="assets/js/popper.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+
+    <script src="assets/plugins/theia-sticky-sidebar/ResizeSensor.js"></script>
+    <script src="assets/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js"></script>
+    <script type="text/javascript">
+        let type_start = document.getElementById("type");
+        type_start.value = "agent";
+        $(function () {
+            $('#load').on('click', function () {
+                $.ajax({
+                    type: 'GET',
+                    url: '@Url.Page("Login", "demo1")',
+                    success: function (result) {
+                        alert(result);
+                    }
+                    });
+            });
+
+
+        });
+
+        function get_type() {
+            let type = document.getElementById("type");
+            let select_type = document.getElementById("select_type");
+
+            type.value = select_type.value;
+        }
+    </script>
+
+</body>
+</html>
+
+   

@@ -1,0 +1,2605 @@
+﻿@page
+@using web_NIN.Models
+@model web_NIN.Pages.OutboundModel
+@{
+}
+@{
+    Layout = "~/Pages/Shared/_Outbound.cshtml";
+}
+
+<div class="card tt">
+    
+    <div class="card-body">
+        @*<button type="button" class="btn btn-outline-warning" onclick="call_action()">OUTBOUND</button>*@
+        <button class="btn btn-primary" onclick="call_action()">OUTBOUND</button>
+    </div>
+
+</div>
+@* ---------------------------------------สถานะการติดต่อ----------------------------------------------- *@
+<div class="card tt">
+    <div class="card-header">
+        <h3 class="card-title">สถานะการติดต่อ</h3>
+
+    </div>
+    <p id="tel" hidden>@ViewData["tel"]</p>
+    <p id="mom_id" hidden>@ViewData["mom_id"]</p>
+    <p id="agent" hidden>@ViewData["agent"]</p>
+    <div class="card-body">
+        
+       
+        <div class="form-group">
+            @*<label for="exampleSelectBorder">สถานะการติดต่อ</label>*@
+            <select class="custom-select form-control-border tk_input" id="statuscall" onchange="status_call()">
+                <option value="select">เลือกสถานะการติดต่อ</option>
+                @foreach (var std in (IEnumerable<Status_call_model>)ViewData["status_call"])
+                {
+                    <option value="@std.eng_status">@std.thai_status</option>
+                }
+
+            </select>
+        </div>
+    </div>
+
+</div>
+@* --------------------------------------------------------------------------------------------------- *@
+
+
+@* ------------------------------นัดเวลาติดต่อ------------------------------------------------------------ *@
+<div class="card tt" id="call_agent" style="display: none;">
+    <div class="card-header">
+        <h3 class="card-title">ต้องการนัดเวลาติดต่อ</h3>
+    </div>
+
+
+    <div class="card-body">
+        <div class="form-group">
+            @*<label for="exampleSelectBorder">สถานะการติดต่อ</label>*@
+            <div class="form-group col-xs-3">
+                <label>
+                    ต้องการนัดเวลาติดต่อ
+
+                </label>
+                <div class="input-group date" id="reservationdatetime" data-target-input="nearest" hidden>
+                    <input type="text" class="form-control datetimepicker-input tk_input" data-target="#reservationdatetime" id="next_time" onclick="save_log(3)" />
+                    <div class="input-group-append" data-target="#reservationdatetime" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="input-group date">
+                    <div id="picker"></div>
+                    <input type="text" id="result_date" value="" />
+                </div>
+                @*<div style="width: 250px; margin: 50px auto;">
+                        <div id="picker-no-time"></div>
+                        <input type="text" id="result2" value="" />
+                    </div>*@
+                @*<button type="button" class="btn btn-secondary" onclick="save_log(2)">ไม่ให้ติดต่อกลับ</button>*@
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@* --------------------------------------------------------------------------------------------------- *@
+<div class="card tt">
+    <div class="card-header">
+        <h3 class="card-title">ประวัติลูกค้า</h3>
+    </div>
+    <div class="card-body">
+
+        <!-- /.card-header -->
+        <!-- form start -->
+
+
+        <div class="form-group col-xs-3">
+            <label for="exampleInputEmail1">ชื่อ-นามสกุลคุณแม่</label>
+            <input type="text" class="form-control tk_input" id="mom_name" value="@ViewData["customer_name"]">
+        </div>
+        <div class="form-group col-xs-3">
+            <label for="exampleInputPassword1">
+                กำหนดคลอดที่คาดการณ์ไว้
+            </label>
+            <input type="text" class="form-control tk_input" id="time_baby" value="@ViewData["Child_birthdate"]">
+        </div>
+        <div class="form-group col-xs-3">
+            <label for="exampleInputPassword1">
+                อายุบุตร
+            </label>
+            <input type="text" class="form-control tk_input" id="baby_age" value="@ViewData["Child_age"]">
+            @{
+                var check = ViewData["Child_age"];
+                if (string.IsNullOrEmpty(check.ToString()))
+                {
+                    <br />
+                    <button type="button" class="btn btn-info" onclick="age_check()">คำนวนอายุ</button>
+                }
+            }
+        </div>
+
+
+
+
+
+    </div>
+</div>
+
+@* ----------------------------------------------------------------------------------- *@
+<div class="card tt" id="mom_div" style="display: none;">
+    <div class="card-header">
+        <h3 class="card-title">สอบถามสถานะการคลอด</h3>
+    </div>
+    <div class="card-body terk">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <p>
+                        จากกำหนดคลอด<span>@ViewData["Child_birthdate"]</span> ตอนนี้น้องอายุได้ <span>@ViewData["Child_age"]</span> แล้วใช่ไหมคะ ?
+                    </p>
+                </div>
+            </div>
+
+
+
+            @*<label for="exampleSelectBorder">สถานะการติดต่อ</label>*@
+            <div class="col-md-6">
+                <div class="form-group">
+                    <select class="custom-select form-control-border tk_input" id="momselect" onchange="mom_select()">
+                        <option value="select">เลือกสถานะคุณแม่</option>
+                        @foreach (var std in (IEnumerable<maternity_status_model>)ViewData["maternity"])
+                        {
+                            <option value="@std.thai_status">@std.thai_status</option>
+                        }
+
+                    </select>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+@* ------------------------------------------กรณีคลอดแล้ว---------------------------------------------------- *@
+
+<div class="card tt" id="given_birth_div" style="display: none;">
+    <div class="card-header">
+        <h3 class="card-title">
+            กรณีคลอดแล้ว
+        </h3>
+    </div>
+
+
+    <div class="card-body terk">
+        <h3>ข้อมูลบุตร</h3>
+
+        @* ---------------datetime picker-------------------------------------------- *@
+        <div class="form-group col-xs-3">
+            <label for="exampleSelectBorder">
+                วันเกิดบุตร
+            </label>
+            <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input tk_input" data-target="#reservationdate" id="age_time" onclick="age_cal()" />
+                <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+        </div>
+
+
+        @* --------------------------อายุ----------------------------------------------- *@
+
+        <div class="form-group col-xs-3">
+            <label for="exampleInputPassword1">อายุ</label>
+            <input type="text" class="form-control tk_input" id="result_age">
+        </div>
+
+        @* ------------------------ชื่อเล่น-------------------------------------- *@
+        <div class="form-group col-xs-3">
+            <label for="exampleInputPassword1">
+                ชื่อเล่นน้อง
+            </label>
+            <input type="text" class="form-control tk_input" id="babyname_input" onchange="get_babyname();">
+        </div>
+        @* --------------------เพศ------------------------------- *@
+
+     
+
+            <div class="form-group  col-xs-3">
+                <div class="form-check">
+
+                    <label for="exampleInputPassword1">
+                        เพศน้อง
+                    </label>
+                </div>
+                <select class="custom-select form-control-border tk_input" id="status_gender" onchange="status_gender()">
+                    <option value="0">--เลือก--</option>
+                    <option value="1">ชาย</option>
+                    <option value="2">หญิง</option>
+
+                </select>
+            </div>
+        
+
+        @* ----------------------กรณี ลูกแผด------------------------------- *@
+        <div class="card-body">
+
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input tk_input" type="checkbox" value="" id="twin_open_t" onchange="twin_open()">
+                    <label class="form-check-label" for="flexCheckDefault">
+                        กรณีลูกแฝด
+                    </label>
+                </div>
+                <select class="custom-select form-control-borde tk_inputr" id="twin" onchange="twin()" style="display: none;">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+        </div>
+
+
+
+        @* -------------------------------เลือกชนิดนม--------------------------------------- *@
+
+        <h3>
+            การดูแลในปัจจุบัน
+        </h3>
+        <div class="form-group col-xs-3">
+            <label for="exampleSelectBorder">
+                ปัจจุบันให้น้องทานนมอะไรอยู่ ?
+            </label>
+            <p>1. </p>
+            <select class="custom-select form-control-border tk_input" id="type_of_milk" onchange="typemilk()">
+                <option value="select">เลือกสถานะคุณแม่</option>
+                @foreach (var std in (IEnumerable<Status_call_model>)ViewData["type_of_milk"])
+                {
+                    <option value="@std.thai_status">@std.thai_status</option>
+                }
+            </select>
+        </div>
+
+        @* ----------------------------เลือกยีห้อนม------------------------------------- *@
+        <div class="form-group col-xs-3" id="sl_milk_b" style="display: none;">
+            <p>2. </p>
+            <select class="custom-select form-control-border tk_input" id="brand_milk" onchange="brand_milk_func()">
+                <option value="select">-เลือก-</option>
+                @foreach (var std in (IEnumerable<Status_call_model>)ViewData["brand_of_milk"])
+                {
+                    <option value="@std.eng_status">@std.thai_status</option>
+                }
+
+            </select>
+        </div>
+        <div class="form-group col-xs-3" id="sl_milk_pp" style="display: none;">
+
+            <label for="exampleSelectBorder">
+                รายละเอียด
+
+            </label>
+
+
+            <div class="card-body">
+                <div class="form-group col-xs-3">
+
+                    <textarea class="form-control tk_input" id="text_annotation"></textarea>
+                </div>
+
+
+            </div>
+
+
+        </div>
+        <h3>
+            ความกังวลใจ
+
+        </h3>
+        <div class="form-group col-xs-3">
+            <label for="exampleSelectBorder">
+                ไม่ทราบว่าช่วงนี้คุณแม่มีความกังวลใจในเรื่องใดหรือไม่ ?
+
+            </label>
+            <select class="custom-select form-control-border tk_input" id="text_worry" onchange="check_worry()">
+                <option value="select">-เลือก-</option>
+                @foreach (var std in (IEnumerable<Status_call_model>)ViewData["type_of_worried"])
+                {
+                    <option value="@std.thai_status">@std.thai_status</option>
+                }
+
+            </select>
+
+        </div>
+        @* -------------------------------รายละเอียด-น้ำนม----------------------------------------- *@
+        <div class="form-group col-xs-3" id="sl_milk" style="display: none;">
+
+            <label for="exampleSelectBorder">
+                รายละเอียด
+
+            </label>
+
+
+            <div class="card-body">
+                <div class="form-group col-xs-3">
+
+                    <textarea class="form-control tk_input" id="text_annotation1"></textarea>
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        @* -----------------------------health problems สุขภาพลูก-------------------------------------- *@
+        <div class="form-group col-xs-3" id="sl_health" style="display: none;">
+            <label for="exampleSelectBorder">
+                ปัญหาสุขภาพที่พบ ?
+            </label>
+            <select class="custom-select form-control-border tk_input" id="health_problems" onchange="health_problems_func()">
+                <option value="select">-เลือก-</option>
+                @foreach (var std in (IEnumerable<Status_call_model>)ViewData["type_problem"])
+                {
+                    <option value="@std.thai_status">@std.thai_status</option>
+                }
+
+            </select>
+        </div>
+
+
+        @* -------------------------------รายละเอียด-น้ำนม----------------------------------------- *@
+        <div class="form-group col-xs-3" id="sl_milk_p" style="display: none;">
+
+            <label for="exampleSelectBorder">
+                รายละเอียด
+
+            </label>
+
+
+            <div class="card-body">
+                <div class="form-group col-xs-3">
+
+                    <textarea class="form-control tk_input" id="text_annotation2"></textarea>
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        @* -------------------------------ความเครียดของคุณแม่------------------------------------------- *@
+        <div class="form-group col-xs-3" id="sl_mom_h" style="display: none;">
+
+            <label for="exampleSelectBorder">
+                ความเครียดที่คุณแม่เผชิญอยู่?
+
+
+            </label>
+
+
+            <div class="card-body">
+                <div class="form-group col-xs-3">
+
+                    <textarea class="form-control tk_input" id="text_worry_detail" onchange="worry_detail()"></textarea>
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+    </div>
+</div>
+
+
+@* ---------------------------------กรณียังไม่คลอด----------------------------------------------------------------- *@
+
+
+<div class="card tt" id="not_yet_birth" style="display: none;">
+    <div class="card-header">
+        <h3 class="card-title">
+            กรณียังไม่คลอด
+        </h3>
+    </div>
+    <div class="card-body terk">
+        <!-- Date -->
+        <div class="form-group col-xs-3">
+            <label for="exampleInputPassword1">
+                กำหนดคลอดเดิม
+
+            </label>
+            <input type="text" class="form-control tk_input" id="exampleInputPassword1" value="@ViewData["Child_birthdate"]">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">
+                อายุครรภ์
+            </label>
+            <p style="color: red">@ViewData["bond_age_t"] </p>
+            <p id="day_momm" hidden>@ViewData["bond_age_tt"]</p>
+            <input type="text" class="form-control tk_input" id="exampleInputPassword1" value="@ViewData["bond_age"] ">
+        </div>
+        @* -----------------------------------------------กำหนดคลอดใหม่----------------------------------------- *@
+        <div class="form-group col-xs-3">
+            <label>
+                กำหนดคลอดใหม่
+            </label>
+            <div class="input-group date" id="reservationdate_t" data-target-input="nearest">
+                <input type="text" class="form-control datetimepicker-input tk_input" data-target="#reservationdate_t" id="child_time" onclick="child_cal()" />
+                <div class="input-group-append" data-target="#reservationdate_t" data-toggle="datetimepicker">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+            </div>
+        </div>
+
+        @* ---------------------------------------------------------------------------------------------------- *@
+
+
+        @* -----------------------------กำหนดคลอด-------------------------------------------------------------- *@
+        <div class="form-group col-xs-3">
+            <label for="exampleInputPassword1">
+                อายุครรภ์
+            </label>
+            <input type="text" class="form-control tk_input" id="child_txt">
+        </div>
+        @* --------------------------------------------------------------------------------------------------- *@
+        <h3 class="card-title">
+            ความกังวลใจ
+
+        </h3>
+        <br />
+        <div class="form-group col-xs-3">
+            <label for="exampleInputPassword1">
+                ไม่ทราบว่าช่วงนี้คุณแม่มีความกังวลใจในเรื่องใดหรือไม่ ?
+
+            </label>
+
+            <textarea class="form-control tk_input" id="test_other" onchange="other_txt()"></textarea>
+
+        </div>
+    </div>
+
+</div>
+
+
+<div class="card tt" id="terk_u" style="display: none;">
+    <div class="card-header">
+        <h3 class="card-title">
+            หมายเหตุ
+        </h3>
+    </div>
+    <div class="card-body terk">
+
+
+        <div class="card-body">
+            <div class="form-group col-xs-3">
+
+                <textarea class="form-control tk_input" id="text_annotation3"></textarea>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+@* ------------------------------ประวัติลูกค้า------------------------------------------------------------- *@
+
+
+
+
+@* ---------------------------------------สถานะการติดต่อ----------------------------------------------- *@
+<div class="card tt">
+    <div class="card-header">
+        <h3 class="card-title">แก้ไขข้อมูลคุณแม่ (กรณีข้อมูลส่วนตัวไม่ถูกต้อง)</h3>
+
+    </div>
+
+    <div class="card-body tt">
+
+        <div class="form-group">
+            @*<button type="button" class="btn btn-secondary" onclick="full_customer_open()">view</button>*@
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault_t" onchange="full_customer_open()">
+                <label class="form-check-label" for="flexCheckDefault">
+                    แก้ไขข้อมูลคุณแม่
+                </label>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body" id="full_customer" style="display: none;">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group col-xs-3">
+                            <label>
+                                ชื่อ-นามสกุล คุณแม่
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_name" value="@ViewData["customer_name"]">
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-xs-3">
+                            <label>
+                                email
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_name_chang" value="@ViewData["cm_email"]">
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label>
+                                หมายเลขโทรศัพท์/หมายเลขเพิ่มเติมอื่น ๆ
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_phone" value="@ViewData["cm_phone"]">
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-xs-3">
+                            <label>
+                                ที่อยู่
+                            </label>
+                            <textarea class="form-control tk_input" id="cus_detail" value="">@ViewData["profile_address_Line1"]</textarea>
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label>
+                                จังหวัด
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_province" value="@ViewData["cm_province"]">
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label>
+                                เขต/ อำเภอ
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_district" value="@ViewData["cm_district"]">
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-xs-3">
+                            <label>
+                                แขวง/ ตำบล
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_sub_district" value="@ViewData["cm_sub_district"]">
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label>
+                                รหัสไปรษณีย์
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_zipcode" value="@ViewData["cm_zipcode"]">
+                        </div>
+                        <!-- /.form-group -->
+
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-md-6">
+                        <div class="form-group col-xs-3">
+                            <label>
+                                ชื่อ-นามสกุล คุณแม่
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_name_ch" onchange="chang_mom_name()">
+                        </div>
+                        <!-- /.form-group -->
+                        <div class="form-group col-xs-3">
+                            <label>
+                                email
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_email_ch" onchange="chang_mom_email()">
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label>
+                                หมายเลขโทรศัพท์/หมายเลขเพิ่มเติมอื่น ๆ
+                            </label>
+                            <input type="text" class="form-control tk_input" id="cus_phone_ch" onchange="chang_mom_phone()">
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label>
+                                ที่อยู่
+                            </label>
+                            <textarea class="form-control tk_input" id="cus_detail_ch" onchange="chang_mom_detail_u()"></textarea>
+                        </div>
+                        @* --------------------------------------------option จังหวัด----------------------------------------------------- *@
+                        <div class="form-group col-xs-3">
+                            <label>
+                                จังหวัด
+                            </label>
+                            <select class="custom-select form-control-border tk_input" id="province" onchange="province_sl()">
+                                <option value="select">-เลือก-</option>
+                                @foreach (var std in (IEnumerable<provinces_model>)ViewData["provinces"])
+                                {
+                                    <option value="@std.id">@std.name_th</option>
+                                }
+
+                            </select>
+                        </div>
+
+                        @* --------------------------------------------option อำเภอ----------------------------------------------------- *@
+                        <div class="form-group col-xs-3">
+                            <label>
+                                เขต/ อำเภอ
+                            </label>
+                            <select class="custom-select form-control-border tk_input" id="amphures_sl" onclick="amphures()">
+                            </select>
+
+                        </div>
+                        @* ------------------------------------------------------------------------------------------------------------- *@
+
+
+                        @* --------------------------------------------option ตำบล----------------------------------------------------- *@
+                        <div class="form-group col-xs-3">
+                            <label>
+                                แขวง/ ตำบล
+                            </label>
+                            <select class="custom-select form-control-border tk_input" id="Districts_sl" onclick="Districts()">
+                            </select>
+                        </div>
+
+                        @* ------------------------------------------------------------------------------------------------------------- *@
+
+                        @* ----------------------------zip_code-------------------------------------------------------------------------- *@
+                        <div class="form-group col-xs-3">
+                            <label>
+                                รหัสไปรษณีย์
+                            </label>
+                            <input type="text" class="form-control tk_input" id="zip_code">
+                        </div>
+
+                        @*<div class="form-group col-xs-3">
+
+                                <button type="button" class="btn btn-secondary" onclick="update_mom()">บันทึก</button>
+                            </div>*@
+                        <!-- /.form-group -->
+
+                    </div>
+                    <!-- /.card-body -->
+
+                    <div class="card-body" id="cancel_t" style="display: none;">
+
+                        <!-- /.card-header -->
+                        <!-- form start -->
+
+                        <label>
+                            กรณีลูกค้าไม่ต้องการรับข้อมูลข่าวสารจากทาง Nestle
+                        </label>
+                        <br />
+                        <br />
+                        <div class="form-group col-xs-3">
+                            <div>
+                                <input class="form-check-input tk_input" type="checkbox" value="" id="flexCheckDefault_c" onchange="checkbox_calcel()">
+                                <label for="exampleInputEmail1">
+                                    ยกเลิกรับข้อมูลข่าวสาร
+
+                                </label>
+                            </div>
+                            <br />
+
+                            <label for="exampleInputEmail1">
+                                เหตุผลที่ไม่ต้องการรับข้อมูล ?
+
+                            </label>
+
+                            <select class="custom-select form-control-border tk_input" id="text_no_info" onchange="no_info()">
+                                <option value="select">-เลือก-</option>
+                                @foreach (var std in (IEnumerable<Status_call_model>)ViewData["cancel_data"])
+                                {
+                                    <option value="@std.thai_status">@std.thai_status</option>
+                                }
+
+                            </select>
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <label for="exampleInputPassword1">
+                                ระบุข้อมูลเพิ่มเติม
+                            </label>
+                            <textarea class="form-control tk_input" id="text_no_info_add" onchange="no_info_add()"></textarea>
+                        </div>
+                        <div class="form-group col-xs-3">
+                            <input class="form-check-input tk_input" type="checkbox" value="" id="flexCheckDefault_cc" onchange="checkbox_calcel1()">
+                            <label for="exampleInputPassword1">
+                                ยกเลิกการสมัครสมาชิก
+
+                            </label>
+
+
+
+
+                        </div>
+                        <textarea class="form-control tk_input" id="text_cancel_subscription" placeholder="สาเหตุ" onchange="cancel_subscription_t()"></textarea>
+
+                    </div>
+
+                    @*<div class="form-group col-xs-3">
+
+                            <button type="button" class="btn btn-secondary">ยืนยัน</button>
+                        </div>*@
+
+
+
+                </div>
+
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </div>
+    </div>
+</div>
+
+
+@* --------------------------------------------------------------------------------------------------- *@
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                <button type="button" class="btn btn-primary" onclick="save_log(1)">ยืนยัน</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModalCenter_t" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle_t"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                <button type="button" class="btn btn-primary" onclick="save_log2(1)">ยืนยัน</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+@* --------------------------------------------------------------------------------------------------- *@
+<div class="card tt">
+
+    <div class="card-body">
+
+        <div class="form-group">
+            <button type="button" class="btn btn-primary btn-lg btn-block" onclick="save_esult()">บันทึก</button>
+        </div>
+    </div>
+</div>
+<p id="replace" hidden>@ViewData["replace"]</p>
+<p id="action_std" hidden></p>
+<p id="result_agent" hidden>@ViewData["agent"]</p>
+<p id="result_st_call" hidden></p>
+<p id="result_cus_name" hidden>@ViewData["customer_name"]</p>
+<p id="result_cus_id" hidden>@ViewData["mom_id"]</p>
+<p id="result_st_bond" hidden></p>
+<p id="result_old_bond" hidden>@ViewData["Child_age"]</p>
+<p id="result_bondday" hidden>@ViewData["Child_birthdate"]</p>
+<p id="result_bond_age" hidden>@ViewData["bond_age"]</p>
+<p id="result_bond_age_new" hidden></p>
+<p id="result_st_babyage" hidden></p>
+<p id="result_total_babyage" hidden></p>
+
+
+<p id="result_babyage" hidden></p>
+<p id="result_babename" hidden></p>
+<p id="result_milkuse" hidden></p>
+<p id="result_milk_brand" hidden></p>
+
+<p id="result_health_problems" hidden></p>
+<p id="result_worry" hidden></p>
+
+<p id="result_new_bondday"hidden ></p>
+<p id="result_worry_unbond"hidden ></p>
+<p id="result_other" hidden></p>
+<p id="result_annotation"hidden ></p>
+<p id="result_annotation1"hidden ></p>
+<p id="result_annotation2" hidden></p>
+<p id="result_annotation3" hidden></p>
+<p id="result_worry_detail" hidden></p>
+<p id="result_gender"hidden ></p>
+<p id="result_twin" hidden></p>
+<p id="result_num" hidden></p>
+
+@* ------update-------- *@
+
+<p id="update_name_m"hidden ></p>
+<p id="update_lname_m" hidden></p>
+<p id="update_email_m" hidden></p>
+<p id="update_phone_m" hidden></p>
+<p id="update_province_m" hidden></p>
+<p id="update_amphures_m" hidden></p>
+<p id="update_Districts_m"hidden ></p>
+<p id="update_zip_code_m" hidden></p>
+<p id="update_detail_m"hidden ></p>
+
+
+@* ------------------ *@
+
+
+<p id="no_information" hidden></p>
+<p id="no_information_add" hidden></p>
+<p id="cancel_subscription" hidden></p>
+
+@* -------------- *@
+<p id="update_check" hidden></p>
+<p id="as_status" hidden></p>
+<p id="as_num" hidden></p>
+<p id="as_num_t" hidden></p>
+@section scripts{
+    <script>
+
+
+        $(function () {
+
+            $('#picker').dateTimePicker({ dateFormat: 'DD/MM/YYYY HH:mm:ss ' });
+            $('#picker-no-time').dateTimePicker({ showTime: false, dateFormat: 'DD/MM/YYYY HH:mm:ss ', title: 'Select Date' });
+
+            $('.select2').select2()
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date picker
+            $('#reservationdate').datetimepicker({
+                format: 'L'
+            });
+            $('#reservationdate_t').datetimepicker({
+                format: 'L'
+            });
+
+            //Date and time picker
+            $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+            $('#reservationdatetime_t').datetimepicker({ icons: { time: 'far fa-clock' } });
+            $('#reservationdatetime_1').datetimepicker({ icons: { time: 'far fa-clock' } });
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'DD/MM/YYYY'
+                }
+            })
+            $('#reservationtime_1').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'DD/MM/YYYY'
+                }
+            })
+
+            $('#reservationtime_t').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'DD/MM/YYYY'
+                }
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Timepicker
+            $('#timepicker').datetimepicker({
+                format: 'LT'
+            })
+
+            //Bootstrap Duallistbox
+            $('.duallistbox').bootstrapDualListbox()
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            $('.my-colorpicker2').on('colorpickerChange', function (event) {
+                $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+            })
+
+            $("input[data-bootstrap-switch]").each(function () {
+                $(this).bootstrapSwitch('state', $(this).prop('checked'));
+            })
+
+        })
+        // BS-Stepper Init
+        document.addEventListener('DOMContentLoaded', function () {
+            window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+        })
+
+        // DropzoneJS Demo Code Start
+        Dropzone.autoDiscover = false
+
+        // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+        var previewNode = document.querySelector("#template")
+        previewNode.id = ""
+        var previewTemplate = previewNode.parentNode.innerHTML
+        previewNode.parentNode.removeChild(previewNode)
+
+        var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+            url: "/target-url", // Set the url
+            thumbnailWidth: 80,
+            thumbnailHeight: 80,
+            parallelUploads: 20,
+            previewTemplate: previewTemplate,
+            autoQueue: false, // Make sure the files aren't queued until manually added
+            previewsContainer: "#previews", // Define the container to display the previews
+            clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+        })
+
+        myDropzone.on("addedfile", function (file) {
+            // Hookup the start button
+            file.previewElement.querySelector(".start").onclick = function () { myDropzone.enqueueFile(file) }
+        })
+
+        // Update the total progress bar
+        myDropzone.on("totaluploadprogress", function (progress) {
+            document.querySelector("#total-progress .progress-bar").style.width = progress + "%"
+        })
+
+        myDropzone.on("sending", function (file) {
+            // Show the total progress bar when upload starts
+            document.querySelector("#total-progress").style.opacity = "1"
+            // And disable the start button
+            file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
+        })
+
+        // Hide the total progress bar when nothing's uploading anymore
+        myDropzone.on("queuecomplete", function (progress) {
+            document.querySelector("#total-progress").style.opacity = "0"
+        })
+
+        // Setup the buttons for all transfers
+        // The "add files" button doesn't need to be setup because the config
+        // `clickable` has already been specified.
+        document.querySelector("#actions .start").onclick = function () {
+            myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
+        }
+        document.querySelector("#actions .cancel").onclick = function () {
+            myDropzone.removeAllFiles(true)
+        }
+        // DropzoneJS Demo Code End
+        // let bond_age = document.getElementById("time_baby").value;
+
+        // console.log(bond_age);
+        //let baby_age = document.getElementById("baby_age");
+
+        //  console.log(bond_age);
+        //  let datt = age_cal_t(bond_age);
+        console.log(datt);
+        function mom_select() {
+
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+
+
+
+
+            let momselect = document.getElementById("momselect").value;
+            let given_birth_div = document.getElementById("given_birth_div");  //not_yet_birth
+            let not_yet_birth = document.getElementById("not_yet_birth");  //not_yet_birth
+            //alert(momselect);
+            //if (momselect == "given birth")
+            //{
+            //    given_birth_div.style.display = "block";
+            //}
+            //else
+            //{
+            //    given_birth_div.style.display = "none";
+            //}
+            let result_st_bond = document.getElementById("result_st_bond");
+            result_st_bond.innerHTML = momselect;
+
+            let as_status = document.getElementById("as_status");
+            let as_num = document.getElementById("as_num");
+            let as_num_t = document.getElementById("as_num_t");
+            switch (momselect) {
+                case "คลอดแล้ว":
+                    given_birth_div.style.display = "block";
+                    not_yet_birth.style.display = "none";
+                    as_status.innerHTML = "Complete";
+                    as_num.innerHTML = "0";
+                    as_num_t.innerHTML = "0";
+                    break;
+                case "ยังไม่คลอด":
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "block";
+                    as_status.innerHTML = "Complete";
+                    as_num.innerHTML = "0";
+                    as_num_t.innerHTML = "4";
+                    break;
+                case "แท้งบุตร":
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    as_status.innerHTML = "Miscarry";
+                    as_num.innerHTML = "4";
+                    as_num_t.innerHTML = "4";
+                    break;
+                default:
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    as_num.innerHTML = "0";
+                    as_num_t.innerHTML = "0";
+                // code block
+            }
+        }
+        function status_call() {
+
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "call_check";
+            //--------------------------------------------
+
+            let command = document.getElementById("statuscall").value;
+            let mom_div = document.getElementById("mom_div");
+            let call_agent = document.getElementById("call_agent");
+            let given_birth_div = document.getElementById("given_birth_div");  //not_yet_birth
+            let not_yet_birth = document.getElementById("not_yet_birth");  //not_yet_birth
+            // alert(command);  //Not Available
+            let mom_id = document.getElementById("mom_id").innerHTML;
+            let result_st_call = document.getElementById("result_st_call");
+            let terk_u = document.getElementById("terk_u");
+            let exampleModalLongTitle = document.getElementById("exampleModalLongTitle");
+            result_st_call.innerHTML = command;
+            exampleModalLongTitle.innerHTML = command;
+            switch (command) {
+                case "Call":
+                    // $('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "block";
+                    terk_u.style.display = "block";
+                    call_agent.style.display = "none";
+                    //  insert_log("Call", "terk1", mom_id);
+                    break;
+                case "Not Available":
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "block";
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "block";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    //insert_log("Not Available", "terk2", mom_id);
+                    //let mom_id = document.getElementById("mom_id").innerHTML;
+                    break;
+                case "select":
+                    //$('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    //  insert_log("select", "terk3", mom_id);
+                    break;
+                case "Miss Call":
+                    // $('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    // insert_log("select", "terk3", mom_id);
+                    break;
+                case "Line Busy":
+                    //$('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    // insert_log("select", "terk3", mom_id);
+                    break;
+                case "Turn Off":
+                    //$('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    // insert_log("select", "terk3", mom_id);
+                    break;
+                case "Foreign customers":
+                    // $('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    // insert_log("select", "terk3", mom_id);
+                    break;
+                case "Wrong Number":
+                    //$('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    // insert_log("select", "terk3", mom_id);
+                    break;
+                case "On Behalf of Owner":
+                    //$('#exampleModalCenter').modal('show');
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+                    // insert_log("select", "terk3", mom_id);
+                    break;
+
+                default:
+                    mom_div.style.display = "none";
+                    call_agent.style.display = "none";
+                    given_birth_div.style.display = "none";
+                    not_yet_birth.style.display = "none";
+                    terk_u.style.display = "none";
+            }
+
+
+
+        }
+        function full_customer_open() {
+
+            let full_customer = document.getElementById("full_customer");
+            let cancel_t = document.getElementById("cancel_t");
+
+            if (full_customer.style.display === "block") {
+                full_customer.style.display = "none";
+                cancel_t.style.display = "none";
+            }
+            else {
+                full_customer.style.display = "block";
+                cancel_t.style.display = "block";
+            }
+        }
+        function province_sl() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";  //update_customer
+            //--------------------------------------------
+            let province = document.getElementById("province").value;
+
+            let province_t = document.getElementById("province");
+
+            let update_province_m = document.getElementById("update_province_m");
+            update_province_m.innerHTML = province_t.options[province_t.selectedIndex].text;
+            //alert(province);
+            let select = document.getElementById('amphures_sl');
+            $.ajax({
+                type: 'GET',
+                url: "/Outbound?handler=Products",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    id: province
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    //alert(datas)
+                    amphures_Obj = JSON.parse(datas);
+                    select.innerHTML = "";
+
+                    for (i = 0; i < amphures_Obj.length; i++) {
+                        //var table += '<option value=' + amphures_Obj[i].id + '">' + amphures_Obj[i].name_th + '</option>';
+                        select.append(new Option(amphures_Obj[i].name_th, amphures_Obj[i].id));
+                    }
+                }
+            });
+        }
+        function amphures() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";  //update_customer
+            //--------------------------------------------
+            let amphures = document.getElementById("amphures_sl").value;
+            let amphures_t = document.getElementById("amphures_sl");
+            let update_amphures_m = document.getElementById("update_amphures_m");
+            update_amphures_m.innerHTML = amphures_t.options[amphures_t.selectedIndex].text;
+
+            let Districts = document.getElementById('Districts_sl');
+            $.ajax({
+                type: 'GET',
+                url: "/Outbound?handler=Districts",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    id: amphures
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    // alert(datas);
+                    Districts_Obj = JSON.parse(datas);
+                    Districts.innerHTML = "";
+
+                    for (i = 0; i < Districts_Obj.length; i++) {
+
+                        Districts.append(new Option(Districts_Obj[i].name_th, Districts_Obj[i].zip_code));
+                    }
+                }
+            });
+        }
+        function Districts() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy"; //update_customer
+            //--------------------------------------------
+            let Districts = document.getElementById('Districts_sl').value;
+            let Districts_t = document.getElementById('Districts_sl');
+            let zip_code = document.getElementById('zip_code');
+            let update_Districts_m = document.getElementById('update_Districts_m');
+            let update_zip_code_m = document.getElementById('update_zip_code_m');
+            update_zip_code_m.innerHTML = Districts;
+            zip_code.value = Districts;
+            update_Districts_m.innerHTML = Districts_t.options[Districts_t.selectedIndex].text;
+            //  update_zip_code_m.innerHTML = Districts;
+
+        }
+        function age_cal() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+
+            let age_time = document.getElementById('age_time').value;
+            let result_age = document.getElementById("result_age");
+            let result_st_babyage = document.getElementById("result_st_babyage");
+            let result_total_babyage = document.getElementById("result_total_babyage");
+
+            const myArray = age_time.split("/");
+
+
+            result_st_babyage.innerHTML = myArray[2] + "-" + myArray[0] + "-" + myArray[1];
+            var d11 = myArray[1];
+            var m11 = myArray[0];
+            var y11 = myArray[2].substring(0, 4);
+
+
+
+            var date = new Date();
+            var d22 = date.getDate();
+            var m22 = 1 + date.getMonth();
+            var y22 = date.getFullYear();
+            var month_t = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (d11 > d22) {
+                d22 = d22 + month_t[m22 - 1];
+                m22 = m22 - 1;
+            }
+            if (m11 > m22) {
+                m22 = m22 + 12;
+                y22 = y22 - 1;
+            }
+            var dddd = d22 - d11;
+            var mmmm = m22 - m11;
+            var yyyyyyyy = y22 - y11;
+            result_age.value = 'น้องอายุ ' + yyyyyyyy + ' ปี ' + Math.abs(mmmm) + ' เดือน ' + dddd + ' วัน';
+            result_total_babyage.innerHTML = yyyyyyyy + ' ปี ' + Math.abs(mmmm) + ' เดือน ' + dddd + ' วัน';
+        }
+
+        function age_cal2(_date) {
+
+            // alert(age_time);
+            const _myArray = _date.split("/");
+            //alert(myArray[0]);
+            //alert(myArray[1]);
+            //alert(myArray[2].substring(0, 4));
+
+
+            var _d11 = _myArray[0];
+            var _m11 = _myArray[1];
+            var _y11 = _myArray[2].substring(0, 4);
+            // alert("d" + _d11 + "m" + _m11 + "y" + _y11);
+            // alert(m11);
+            // alert(y11);
+
+
+            var _date = new Date();
+            var _d22 = _date.getDate();
+            var _m22 = _date.getMonth();
+            var _y22 = _date.getFullYear();
+            var _month_t = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            var _dddd = 0;
+            if (_d11 > _d22) {
+                _dddd = _d11 - _d22;
+                _m22 = _m22;
+            }
+            else {
+                _dddd = _d22 - _d11;
+            }
+            if (_m11 > _m22) {
+
+                _m22 = _m22;
+                _y22 = _y22;
+            }
+
+            var _mmmm = _m22 - _m11;
+            var _yyyyyyyy = _y22 - _y11;
+
+            return _yyyyyyyy + ' ปี ' + Math.abs(_mmmm) + ' เดือน ' + _dddd + ' วัน';
+
+        }
+        function age_cal_t(_date) {
+
+
+
+            // alert(age_time);
+            const _myArray = _date.split("/");
+            //alert(myArray[0]);
+            //alert(myArray[1]);
+            //alert(myArray[2].substring(0, 4));
+
+
+            var _d11 = _myArray[1];
+            var _m11 = _myArray[0];
+            var _y11 = _myArray[2].substring(0, 4);
+            // alert(d11);
+            // alert(m11);
+            // alert(y11);
+
+
+            var _date = new Date();
+            var _d22 = _date.getDate();
+            var _m22 = 1 + _date.getMonth();
+            var _y22 = _date.getFullYear();
+            var _month_t = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (_d11 > _d22) {
+                _d22 = _d22 + _month_t[m22 - 1];
+                _m22 = _m22 - 1;
+            }
+            if (_m11 > _m22) {
+                _m22 = _m22 + 12;
+                _y22 = _y22 - 1;
+            }
+            var _dddd = _d22 - _d11;
+            var _mmmm = _m22 - _m11;
+            var _yyyyyyyy = _y22 - _y11;
+
+            return _yyyyyyyy + ' ปี ' + Math.abs(_mmmm) + ' เดือน ' + _dddd + ' วัน';
+        }
+        function child_cal_a() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let child_time = document.getElementById("child_time").value; //child_txt
+            let child_txt = document.getElementById("child_txt"); //child_txt
+            let result_bond_age_new = document.getElementById("result_bond_age_new");
+            let result_st_babyage = document.getElementById("result_st_babyage");
+            const myArray_1 = child_time.split("/");
+
+            var d11_1 = myArray_1[1];
+            var m11_1 = myArray_1[0];
+            var y11_1 = myArray_1[2].substring(0, 4);
+
+
+            var date_1 = new Date();
+            var d22_1 = date_1.getDate();
+            var m22_1 = date_1.getMonth();
+            var y22_1 = date_1.getFullYear();
+
+
+            var month_tt = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (d11_1 > d22_1) {
+
+            }
+            if (m11_1 > m22_1) {
+                m22_1 = m22_1;
+                y22_1 = y22_1;
+            }
+            var dddd_1 = d22_1 - d11_1;
+            var mmmm_1 = m22_1 - m11_1;
+
+
+            if (mmmm_1 < 0) {
+                mmmm_1 = 0;
+            }
+            var yyyyyyyy_1 = y22_1 - y11_1;
+
+            child_txt.value = 'อายุครรภ์ ' + yyyyyyyy_1 + ' ปี ' + mmmm_1 + ' เดือน ' + Math.abs(dddd_1) + ' วัน';
+            result_st_babyage.innerHTML = 'อายุครรภ์ ' + yyyyyyyy_1 + ' ปี ' + mmmm_1 + ' เดือน ' + Math.abs(dddd_1) + ' วัน';
+            result_bond_age_new.innerHTML = myArray_1[1] + "/" + myArray_1[0] + "/" + myArray_1[2];
+        }
+        function child_cal() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let child_time = document.getElementById("child_time").value; //child_txt
+            let child_txt = document.getElementById("child_txt"); //child_txt
+            let result_bond_age_new = document.getElementById("result_bond_age_new");
+            let result_st_babyage = document.getElementById("result_st_babyage"); 
+            const myArray_1 = child_time.split("/");
+            //alert(getNumberOfDays(child_time));
+
+            let day_momm = document.getElementById("day_momm").innerHTML;
+
+
+
+            var d11_1 = myArray_1[1];
+            var m11_1 = myArray_1[0];
+            var y11_1 = myArray_1[2].substring(0, 4);
+
+
+            var date_1 = new Date();
+            var d22_1 = date_1.getDate();
+            var m22_1 = date_1.getMonth();
+            var y22_1 = date_1.getFullYear();
+            let date_send = myArray_1[2] + myArray_1[0] + myArray_1[1];
+            get_mom_date_t(date_send);
+
+
+
+
+            var month_tt = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (d11_1 > d22_1) {
+
+            }
+            if (m11_1 > m22_1) {
+                m22_1 = m22_1;
+                y22_1 = y22_1;
+            }
+            var dddd_1 = d22_1 - d11_1;
+            var mmmm_1 = m22_1 - m11_1;
+
+
+            if (mmmm_1 < 0) {
+                mmmm_1 = 0;
+            }
+            var yyyyyyyy_1 = y22_1 - y11_1;
+
+            //var child_time_1 = new Date(child_time);
+            //var child_time_2 = new Date();
+            //console.log(child_time_1);
+            //console.log(child_time_2);
+            //var diffDays = child_time_2.getTime() - child_time_1.getTime();
+
+            //var Difference_In_Days = diffDays / (1000 * 3600 * 24);
+            //alert(Difference_In_Days);
+
+
+
+
+
+
+
+            //let hhh = parseInt(day_momm);
+            //let jjj = (hhh + Math.abs(dddd_1)) / 7;
+
+
+
+
+
+
+            //child_txt.value = ''; //<---
+            //  result_st_babyage.innerHTML = 'อายุครรภ์ ' + yyyyyyyy_1 + ' ปี ' + mmmm_1 + ' เดือน ' + Math.abs(dddd_1) + ' วัน';
+            result_st_babyage.innerHTML = myArray_1[2] + "-" + myArray_1[0] + "-" + myArray_1[1];
+        }
+
+        function getNumberOfDays(end) {
+            const date1 = new Date.now;
+            const date2 = new Date(end);
+
+            // One day in milliseconds
+            const oneDay = 1000 * 60 * 60 * 24;
+
+            // Calculating the time difference between two dates
+            const diffInTime = date2.getTime() - date1.getTime();
+
+            // Calculating the no. of days between two dates
+            const diffInDays = Math.round(diffInTime / oneDay);
+
+            return diffInDays;
+        }
+        function child_cal1() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let child_time = document.getElementById("child_time").value; //child_txt
+            let child_txt = document.getElementById("child_txt"); //child_txt
+            let result_bond_age_new = document.getElementById("result_bond_age_new");
+            let result_st_babyage = document.getElementById("result_st_babyage");
+            const myArray_1 = child_time.split("/");
+
+            var d11_1 = myArray_1[1];
+            var m11_1 = myArray_1[0];
+            var y11_1 = myArray_1[2].substring(0, 4);
+
+
+            var date_1 = new Date();
+            var d22_1 = date_1.getDate();
+            var m22_1 = date_1.getMonth();
+            var y22_1 = date_1.getFullYear();
+
+
+            var month_tt = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            if (d11_1 > d22_1) {
+
+            }
+            if (m11_1 > m22_1) {
+                m22_1 = m22_1;
+                y22_1 = y22_1;
+            }
+            var dddd_1 = d22_1 - d11_1;
+            var mmmm_1 = m22_1 - m11_1;
+
+
+            if (mmmm_1 < 0) {
+                mmmm_1 = 0;
+            }
+            var yyyyyyyy_1 = y22_1 - y11_1;
+
+            child_txt.value = 'กำหนดคลอดใหม่ ' + yyyyyyyy_1 + ' ปี ' + mmmm_1 + ' เดือน ' + Math.abs(dddd_1) + ' วัน';
+            result_st_babyage.innerHTML = 'กำหนดคลอดใหม่ ' + yyyyyyyy_1 + ' ปี ' + mmmm_1 + ' เดือน ' + Math.abs(dddd_1) + ' วัน';
+            result_bond_age_new.innerHTML = myArray_1[1] + "/" + myArray_1[0] + "/" + myArray_1[2];
+        }
+        function call_action() {
+            // alert("test_button");
+
+            let agent = document.getElementById("agent").innerHTML;
+            let tel = document.getElementById("tel").innerHTML;
+            var text_tel = "";
+            /* tel = "66626628551"*/
+            if (tel.length > 10) {
+                tel = "0" + tel.substring(2);
+            }
+            text_tel = "http://pro_ws.fcc.co.th/API-Pureconnect/api/PureConnect/getMakeCall?userId=";
+            text_tel += agent;
+
+            text_tel += "&password=Pr0tecti0n&telno=";
+            text_tel += tel;
+
+            text_tel += "&accountCodeId=57703&workgroup_id=OB_Care_Call_2022_NIN";
+            console.log(text_tel);
+            $.ajax({
+                type: 'GET',
+                url: text_tel,
+                success: function (result) {
+                    alert("ระบบได้โทรติดต่อแล้ว");
+                    myTimer(result);
+                }
+            });
+        }
+        function insert_log(status, action, mom_id, next) {
+            let replace = document.getElementById("replace").innerHTML;
+            $.ajax({
+                type: 'GET',
+                url: "/Outbound?handler=Insertlog",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    status: status,
+                    action: action,
+                    customer_id: mom_id,
+                    next_t: next,
+                    replace: replace
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    alert("บันทึกข้อมูลสำเร็จ")
+                    window.location.href = "Main";
+                }
+            });
+        }
+        function insert_log_na(status, action, mom_id, next) {
+            let replace = document.getElementById("replace").innerHTML;
+            $.ajax({
+                type: 'GET',
+                url: "/Outbound?handler=Insertlog",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    status: status,
+                    action: action,
+                    customer_id: mom_id,
+                    next_t: next,
+                    replace: replace
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    //alert("บันทึกข้อมูลสำเร็จ")
+                   // window.location.href = "Main";
+                }
+            });
+        }
+        function get_babyname() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let babyname = document.getElementById("babyname_input").value;
+            let result_babename = document.getElementById("result_babename");
+            result_babename.innerHTML = babyname;
+        }
+        function typemilk() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+
+            let type_of_milk = document.getElementById("type_of_milk").value;
+            let result_milkuse = document.getElementById("result_milkuse");
+            result_milkuse.innerHTML = type_of_milk;
+            let sl_milk_b = document.getElementById("sl_milk_b");
+
+            if (type_of_milk != "นมแม่") {
+                sl_milk_b.style.display = "block";
+            }
+            else {
+                sl_milk_b.style.display = "none";
+            }
+        }
+        function brand_milk_func() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            let sl_milk_pp = document.getElementById("sl_milk_pp")
+            //--------------------------------------------
+            let brand_milk = document.getElementById("brand_milk").value;
+            let result_milk_brand = document.getElementById("result_milk_brand");
+
+
+            if (brand_milk == "other" || brand_milk == "NA") {
+                sl_milk_pp.style.display = "block";
+            }
+            else {
+                sl_milk_pp.style.display = "none";
+            }
+
+
+            result_milk_brand.innerHTML = brand_milk;
+        }
+        function health_problems_func() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let health_problems = document.getElementById("health_problems").value;
+            let result_health_problems = document.getElementById("result_health_problems");
+            let sl_milk = document.getElementById("sl_milk_p");
+            result_health_problems.innerHTML = health_problems;
+
+            if (health_problems == "อื่น ๆ") {
+                sl_milk.style.display = "block";
+            }
+            else {
+                sl_milk.style.display = "none";
+            }
+        }
+        function check_worry() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let text_worry = document.getElementById("text_worry").value;
+            let result_worry = document.getElementById("result_worry");
+            let sl_milk = document.getElementById("sl_milk");
+            let sl_health = document.getElementById("sl_health");
+            let sl_mom_h = document.getElementById("sl_mom_h");
+
+            switch (text_worry) {
+                case "น้ำนม":
+                    sl_milk.style.display = "block";
+                    sl_health.style.display = "none";
+                    sl_mom_h.style.display = "none";
+                    break;
+                case "สุขภาพลูก":
+                    sl_milk.style.display = "none";
+                    sl_health.style.display = "block";
+                    sl_mom_h.style.display = "none";
+                    break;
+                case "ความเครียดของคุณแม่":
+                    sl_milk.style.display = "none";
+                    sl_health.style.display = "none";
+                    sl_mom_h.style.display = "block";
+                    break;
+                default:
+                    sl_milk.style.display = "none";
+                    sl_health.style.display = "none";
+                    sl_mom_h.style.display = "none";
+            }
+            result_worry.innerHTML = text_worry;
+        }
+        function other_txt() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let test_other = document.getElementById("test_other").value;
+            let result_other = document.getElementById("result_other");
+            result_other.innerHTML = test_other;
+        }
+        function annotation_txt() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let text_annotation = document.getElementById("text_annotation");
+            let result_annotation = document.getElementById("result_annotation");
+            result_annotation.innerHTML = text_annotation;
+            alert(text_annotation.value);
+        }
+        function chang_mom_name() {
+
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";  //update_customer
+            //----------------------------------------- ---
+
+            let update_check = document.getElementById("update_check");
+
+
+
+
+
+
+
+
+
+            //----------------------------------------
+            let cus_name_ch = document.getElementById("cus_name_ch").value;
+            const name_Array = cus_name_ch.split(" ");
+            let update_name_m = document.getElementById("update_name_m");
+            let update_lname_m = document.getElementById("update_lname_m");
+            update_name_m.innerHTML = name_Array[0];
+            update_lname_m.innerHTML = name_Array[1];
+        }
+        function chang_mom_email() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy"; //update_customer
+            //--------------------------------------------
+
+            let update_check = document.getElementById("update_check");
+
+
+
+
+
+            //-----------------------------------------
+            let cus_email_ch = document.getElementById("cus_email_ch").value;
+            let update_email_m = document.getElementById("update_email_m");
+            update_email_m.innerHTML = cus_email_ch;
+        }
+        function chang_mom_phone() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy"; //update_customer
+            //--------------------------------------------
+
+            let update_check = document.getElementById("update_check");
+
+
+
+
+
+
+
+            //---------------------------------------------
+            let cus_phone_ch = document.getElementById("cus_phone_ch").value;
+            let update_phone_m = document.getElementById("update_phone_m");
+            update_phone_m.innerHTML = cus_phone_ch;
+        }
+        function no_info() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy"; //update_customer
+            //--------------------------------------------
+            let text_no_info = document.getElementById("text_no_info").value;
+            let no_information = document.getElementById("no_information");
+            no_information.innerHTML = text_no_info;
+        }
+        function no_info_add() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy"; //update_customer
+            //--------------------------------------------
+            let text_no_info_add = document.getElementById("text_no_info_add").value;
+            let no_information_add = document.getElementById("no_information_add");
+            no_information_add.innerHTML = text_no_info_add;
+        }
+        function cancel_subscription_t() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy"; //update_customer
+            //--------------------------------------------
+            let text_cancel_subscription = document.getElementById("text_cancel_subscription").value;
+            let cancel_subscription = document.getElementById("cancel_subscription");
+            cancel_subscription.innerHTML = text_cancel_subscription;
+        }
+        function worry_detail() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy";
+            //--------------------------------------------
+            let text_worry_detail = document.getElementById("text_worry_detail").value;
+            let result_worry_detail = document.getElementById("result_worry_detail");
+            result_worry_detail.innerHTML = text_worry_detail;
+        }
+        function chang_mom_detail_u() {
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "survy"; //update_customer
+            //--------------------------------------------
+
+
+            let update_check = document.getElementById("update_check");
+
+
+
+
+
+            let cus_detail_ch = document.getElementById("cus_detail_ch").value;
+            let update_detail_m = document.getElementById("update_detail_m");
+            update_detail_m.innerHTML = cus_detail_ch;
+        }
+        function update_mom() {
+            let result_agent = document.getElementById("result_agent").innerHTML;
+            let mom_id = document.getElementById("mom_id").innerHTML;
+            let result;
+            let header;
+            let old_value;
+            let command = "";
+            let command_old = "";
+            let old_txt = "";
+            let command_h = "";
+            let old_mom_arr = ['cus_name', 'cus_name', 'cus_name_chang', 'cus_phone', 'cus_province', 'cus_district', 'cus_sub_district', 'cus_zipcode', 'cus_detail'];
+            let update_mom_arr = ['update_name_m', 'update_lname_m', 'update_email_m', 'update_phone_m', 'update_province_m', 'update_amphures_m', 'update_Districts_m', 'update_zip_code_m', 'update_detail_m'];
+            let head_mom_arr = ['profile_firstName', 'profile_lastName', 'profile_email', 'profile_mobile', 'profile_region', 'profile_city', 'profile_addressLine2', 'profile_zip', 'profile_address_Line1'];
+            for (i = 0; i < update_mom_arr.length; i++) {
+                result = document.getElementById(update_mom_arr[i]).innerHTML;
+                header = head_mom_arr[i];
+                old_value = document.getElementById(old_mom_arr[i]).value;
+                if (result === "") {
+
+                }
+                else {
+                    command += "," + header + "='" + result + "'";
+                    old_txt += "," + header + "='" + old_value + "'";
+                }
+            }
+            command = command.substring(1);
+            command_old = old_txt.substring(1);
+            command += ",update_status = 'yes'";
+            console.log(command);
+            let sql = "UPDATE tbNIN_CRM_Outbound SET " + command + "where tbCRM_id=" + mom_id;
+            console.log(sql);
+
+            $.ajax({
+                type: 'GET',
+                url: "/Outbound?handler=Updatemom",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    command: sql,
+                    old_data: command_old,
+                    mom_id: mom_id,
+                    agent: result_agent
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    // alert("บันถึกข้อมูลสำเร็จ")
+                    location.reload();
+                }
+            });
+        }
+
+        function get_mom_date_t(date) {
+            var result = "";
+            let child_txt = document.getElementById("child_txt"); //child_txt
+            let result_st_babyage = document.getElementById("result_st_babyage"); //child_txt
+            // let result_bond_age_new = document.getElementById("result_bond_age_new"); //child_txt
+            $.ajax({
+                type: 'GET',
+                url: "/Outbound?handler=MOMdate",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    date: date,
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    //alert(datas);
+                    child_txt.value = datas;
+                   // result_st_babyage.innerHTML = datas;
+                    result_bond_age_new.innerHTML = datas;
+                    // window.location.href = "Main";
+                }
+            });
+            //  return result;
+        }
+        function update_update_assign_f(num_tt) {
+            let mom_id = document.getElementById("mom_id").innerHTML;
+            let replace = document.getElementById("replace").innerHTML;
+            const timeElapsed = Date.now();
+            const today = new Date(timeElapsed);
+            let time = today.toISOString(); // "2020-06-13T18:30:00.000Z"
+            const myArray1 = time.split("T");
+
+            let no_information = document.getElementById("no_information").innerHTML;
+            let no_information_add = document.getElementById("no_information_add").innerHTML;
+            let cancel_subscription = document.getElementById("cancel_subscription").innerHTML;
+
+            let replace_no = parseInt(replace);
+            let st_text = "";
+            switch (num_tt) {
+                case 0:
+                    st_text = "";
+                    break;
+                case 1:
+                    st_text = "Cancel Consent";
+                    break;
+                case 2:
+                    st_text = "Cancel Member";
+                    break;
+                case 3:
+                    st_text = "Cancel Consent and Cancel Member";
+                    break;
+                default:
+                    st_text = "";
+            }
+
+
+            // alert(myArray1[1]);
+
+            let sql = "UPDATE nin_assign SET update_date = '" + myArray1[0] + "',update_time = '" + myArray1[1] + "',remark = '" + no_information + "' ,status = '" + st_text + "',statusOfCase = 'Reachable',detail = '" + no_information_add + "',reason = '" + cancel_subscription + "',numberOfRepeat = '" + (replace_no + 1) + "' where custommerID =" + mom_id;
+            let sql_2 = "UPDATE tbNIN_CRM_Outbound SET data_subscriptions_THnestlegrp_Oonestle_email = '0' where tbCRM_id =" + mom_id;
+            $.ajax({
+                type: 'GET',
+                url: "/Outbound?handler=Updatemom",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    command: sql,
+                    command2: sql_2,
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                      alert("บันถึกข้อมูลสำเร็จ")
+                       window.location.href = "Main";
+                }
+            });
+        }
+        function save_esult() {
+
+            //-----------------get action-----------------------
+            let action_std = document.getElementById("action_std").innerHTML;
+            let exampleModalLongTitle = document.getElementById("exampleModalLongTitle").innerHTML;
+            let mom_id = document.getElementById("mom_id").innerHTML;
+            let next_time = document.getElementById("next_time").value;
+            let txt = "";
+            let flexCheckDefault_t = document.getElementById("flexCheckDefault_t").checked;
+            let flexCheckDefault_c = document.getElementById("flexCheckDefault_c").checked;
+            let flexCheckDefault_cc = document.getElementById("flexCheckDefault_cc").checked;
+
+
+
+            let update_province_m_check = document.getElementById("update_province_m").innerHTML;
+            let update_amphures_m_check = document.getElementById("update_amphures_m").innerHTML;
+            let update_Districts_m_check = document.getElementById("update_Districts_m").innerHTML;
+            let update_zip_code_m_check = document.getElementById("update_zip_code_m").innerHTML;
+
+            let result_date = document.getElementById("result_date").value;
+
+
+            //  alert(action_std);
+            switch (action_std) {
+                case "call_check":
+
+                    txt = "' next call : " + result_date;
+                    insert_log(exampleModalLongTitle, "call", mom_id, txt);
+
+                    break;
+                case "appointment":
+                    txt = "' next call : " + next_time + "'";
+                    insert_log(exampleModalLongTitle, "call", mom_id, txt);
+                    break;
+                case "survy":
+
+                    let check_toggle = true;
+                    let check_toggle_status = "";
+
+                    let province_check = false;
+
+
+
+
+
+                    if (flexCheckDefault_t == true) {
+
+                        if (update_province_m_check == "") {
+
+                            province_check = false;
+                        }
+                        else {
+                            // check_toggle_status += "กรุณาเลือกจังหวัด  :: ";
+                            check_toggle = false;
+
+
+                            province_check = true;
+                        }
+
+
+                        if (province_check == true) {
+
+                            if (update_amphures_m_check == "") {
+                                check_toggle_status += "กรุณาเลือกอำเภอ  :: ";
+                                check_toggle = false;
+                            }
+                            else {
+                                check_toggle = true;
+                            }
+                            if (update_Districts_m_check == "") {
+                                check_toggle_status += "กรุณาเลือกตำบล  :: ";
+                                check_toggle = false;
+                            }
+                            else {
+                                check_toggle = true;
+                            }
+                            if (update_zip_code_m_check == "") {
+                                check_toggle_status += "รหัสไปรษณีย์  :: ";
+                                check_toggle = false;
+                            }
+                            else {
+                                check_toggle = true;
+                            }
+                        }
+
+
+                        if (check_toggle == false) {
+
+                            check_toggle_status += "  กรุณาตรวจสอบข้อมูลให้ถูกต้องด้วยครับ";
+                            alert(check_toggle_status);
+                        }
+                        else {
+
+
+
+                            
+                           // alert("ooo" + flexCheckDefault_c + flexCheckDefault_cc);
+                            ///------------------------------cancel----------------------------
+                            if (flexCheckDefault_c == true || flexCheckDefault_cc == true)
+                            {
+
+                                let numm_1 = 0;
+                                let numm_2 = 0;
+                                let t_num = 0;
+                                if (flexCheckDefault_c == true) {
+                                    numm_1 = 1
+                                }
+                                if (flexCheckDefault_cc == true) {
+                                    numm_2 = 2
+                                }
+                                t_num = numm_1 + numm_2;
+
+
+                                insert_log_na("Cancel", "call", mom_id, t_num);
+                                update_update_assign_f(t_num);
+                                check_toggle = false;
+
+                            }
+                            else {
+                                update_mom();
+
+                            }
+//--------------------------------------------------------------------
+
+
+
+                        }
+
+
+
+
+                    }
+
+
+                    if (check_toggle == true) {
+                        // alert("OK");
+                        record_result();
+                    }
+
+
+
+
+
+
+                    break;
+                case "update_customer":
+                    // update_mom();
+                    break;
+                case "update_assign":
+
+                    //update_update_assign_f();
+                    break;
+                default:
+                // code block
+            }
+
+
+        }
+
+
+        function record_result() {
+            let replace = document.getElementById("replace").innerHTML;
+            let cus_id = document.getElementById("result_cus_id").innerHTML;
+
+            //----------------------------
+            let text_annotation = document.getElementById("text_annotation").value;
+            let result_annotation = document.getElementById("result_annotation");
+            result_annotation.innerHTML = text_annotation;
+            //---------1----------------------
+
+            let text_annotation1 = document.getElementById("text_annotation1").value;
+            let result_annotation1 = document.getElementById("result_annotation1");
+            result_annotation1.innerHTML = text_annotation1;
+
+
+            //---------2-------------------
+            let text_annotation2 = document.getElementById("text_annotation2").value;
+            let result_annotation2 = document.getElementById("result_annotation2");
+            result_annotation2.innerHTML = text_annotation2;
+
+
+
+            //--------3---------------
+
+            let text_annotation3 = document.getElementById("text_annotation3").value;
+            let result_annotation3 = document.getElementById("result_annotation3");
+            result_annotation3.innerHTML = text_annotation3;
+
+            let result_gender_y = document.getElementById("status_gender").value;
+
+            let as_status = document.getElementById("as_status").innerHTML;
+            let as_num = document.getElementById("as_num").innerHTML;
+            let as_num_t = document.getElementById("as_num_t").innerHTML;
+            if (result_gender_y != "0" || as_num_t == "4") {
+                let result;
+                let header;
+                let command_h = "";
+                let command_v = "";
+                let insert_mom_arr = [
+                    'result_agent',
+                    'result_st_call',
+                    'result_cus_name',
+                    'result_cus_id',
+                    'result_st_bond',
+                    'result_old_bond',
+                    'result_bondday',
+                    'result_bond_age',
+                    'result_bond_age_new',
+                    'result_st_babyage',
+                    'result_total_babyage',
+                    'result_babyage',
+                    'result_babename',
+                    'result_milkuse',
+                    'result_milk_brand',
+                    'result_health_problems',
+                    'result_worry',
+                    'result_new_bondday',
+                    'result_worry_unbond',
+                    'result_other',
+                    'result_annotation',
+                    'result_gender',
+                    'result_twin',
+                    'result_num',
+                    'result_annotation1',
+                    'result_annotation2',
+                    'result_annotation3'
+
+                ]
+
+                let insert_mom_arr_h = [
+                    'create_operator_name',
+                    'status',
+                    'customer_name',
+                    'customerID',
+                    'born_status',
+                    'result_bday_th_original',
+                    'birthDate_original',
+                    'remark',
+                    'result_bday_th_new',
+                    'birthDate_new',
+                    'result_bday_th_new',
+                    'result_babyage',
+                    'child_name',
+                    'milk_type',
+                    'milk_brand',
+                    'health_problems',
+                    'worry',
+                    'result_new_bondday',
+                    'worry',
+                    'other',
+                    'result_annotation',
+                    'gender',
+                    'twin_status',
+                    'twin_number',
+                    'result_annotation_1',
+                    'result_annotation_2',
+                    'result_annotation_3',
+
+                ]
+
+
+                for (i = 0; i < insert_mom_arr.length; i++) {
+                    result = document.getElementById(insert_mom_arr[i]).innerHTML;
+                    header = insert_mom_arr_h[i];
+
+                    if (insert_mom_arr === "") {
+                        check_result = false;
+                    }
+                    if (result === "") {
+
+                    }
+                    else {
+                        command_h += "," + header;
+                        command_v += ",'" + result + "'";
+                    }
+                }
+                command_h = command_h.substring(1);
+                command_v = command_v.substring(1);
+                let result_st_bond = document.getElementById("result_st_bond").innerHTML;
+
+
+
+                //-----------------update to base----------------------------
+
+                let baby_detail = ['result_gender',
+                    'result_babename',
+                    'result_st_babyage',
+                    'result_st_babyage',
+                    'as_num',
+                ];
+
+                let baby_f = ['child_1_sex',
+                    'child_1_name',
+                    'child_1_birthDate',
+                    'crm_childBirthDate_used',
+                    'child_1_birthDateReliability',
+                ];
+
+                let result_update;
+                let header_update;
+                let command_update = "";
+               
+
+
+
+                for (t = 0; t < baby_detail.length; t++)
+                {
+                    result_update = document.getElementById(baby_detail[t]).innerHTML;
+                    header_update = baby_f[t];
+                    command_update += ","+header_update + "='" + result_update+"'";
+                }
+
+                command_update = command_update.substring(1);
+                console.log(command_update);
+
+
+
+                //-----------------------------------------------------------
+
+
+
+                if (result_st_bond === "") {
+                    alert("กรุณารอกข้อมูล");
+                }
+                else {
+                    $.ajax({
+                        type: 'GET',
+                        url: "/Outbound?handler=Update",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: {
+                            table: "nin_result_record",
+                            header: command_h,
+                            value: command_v,
+                            customer: cus_id,
+                            replace: replace,
+                            status: as_status,
+                            upd: command_update
+                        },
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("XSRF-TOKEN",
+                                $('input:hidden[name="__RequestVerificationToken"]').val());
+                        },
+                        success: function (datas) {
+                            console.log(datas);
+                            //-----------------------------------------------
+                            Swal.fire({
+                                icon: 'success',
+                                html: "<h3 style='color:#FFFFF0'>บันทึกสำเร็จ</h3>",
+                                background: '#85C1E9',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                allowOutsideClick: false
+                            });
+
+                            setTimeout(function () {
+                                window.location.href = "Main";
+                            }, 1500);
+
+
+
+
+                            //----------------------------terk--------------------------------
+
+                            // alert("บันทึกข้อมูลสำเร็จ")
+
+
+                        }
+
+                    });
+                }
+            }
+            else {
+                alert("ระบุเพศน้องด้วยจิ");
+            }
+
+
+
+
+            // console.log(command_v);
+
+
+
+
+        }
+
+        function myTimer(data) {
+
+
+            setInterval(function () {
+
+                call_Obj = JSON.parse(data);
+                console.log(call_Obj.interactionId);
+                //var usr_name_b = document.getElementById("usr_name").innerHTML;
+                var usr_name_b = "Ittipon";
+                var call_status_back = "http://pro_ws.fcc.co.th/API-Pureconnect/api/PureConnect/Status?vUserid="
+                call_status_back += usr_name_b;
+                call_status_back += "&vPassword=Pr0tecti0n";
+                $.get(call_status_back, function (data_status) {
+
+                    call_back_Obj = JSON.parse(data_status);
+                    console.log(call_back_Obj.statusId);
+                    // var x = document.getElementById("terk_model");
+
+                    //switch (call_back_Obj.statusId) {
+                    //    case "Dialing":
+                    //        // code block
+                    //        break;
+                    //    case "Handled Call":
+                    //        if (x.style.display === "none") {
+                    //            x.style.display = "block";
+                    //        } else {
+                    //            // x.style.display = "none";
+                    //        }
+                    //        break;
+
+                    //    case "Follow Up":
+                    //        //var gif_show = document.getElementById("gif_show");
+                    //       /// gif_show.innerHTML = "<p>ลูกค้าวางสาย</P><br><button type='button' class='btn btn-outline-danger' onclick='call_status(3)'  data-toggle='modal' data-target='#exampleModalCenter'>confirm</button><br><br>";
+                    //        // x.style.display = "none";
+                    //        clearInterval(call_Obj.interactionId);
+                    //       // canael_call(id);
+                    //        break;
+                    //    default:
+                    //    // code block
+                    // }
+
+
+                });
+
+
+
+            }, 5000);
+
+        }
+
+        function save_log(id) {
+
+            //-----------action-----------------------------
+
+            let action_std = document.getElementById("action_std");
+            action_std.innerHTML = "appointment";
+            //--------------------------------------------
+
+
+
+
+            let mom_id = document.getElementById("mom_id").innerHTML;
+            let exampleModalLongTitle = document.getElementById("exampleModalLongTitle").innerHTML;
+            //alert(exampleModalLongTitle.innerHTML)
+            let exampleModalLongTitle_t = document.getElementById("exampleModalLongTitle_t");
+
+
+
+            //switch (id) {
+            //    case 1:
+            //        insert_log(exampleModalLongTitle, "terk1", mom_id);
+            //        https://localhost:44388/Main
+            //        window.location.href = "Main";
+            //        break;
+            //    case 2:
+            //        exampleModalLongTitle_t.innerHTML = "ไม่ให้ติดต่อกลับ"
+            //        $('#exampleModalCenter_t').modal('show');
+            //          insert_log("ไม่ให้โทรมาอีก", "terk1", mom_id);
+            //        next_call("ไม่ให้โทรมาอีก", "terk1", mom_id);
+            //        break;
+            //    case 3:
+            //        exampleModalLongTitle_t.innerHTML = "นัดเวลาใหม่"
+            //        $('#exampleModalCenter_t').modal('show');
+            //        let next_time = document.getElementById("next_time").value;
+            //        next_call("นัดเวลาใหม่", next_time, mom_id);
+            //        break;
+            //    default:
+            //     code block
+            //}
+
+            //$('#exampleModalCenter').modal('hide');
+        }
+
+
+        function save_log2(id) {
+            let next_time = document.getElementById("next_time").value;
+            let mom_id = document.getElementById("mom_id").innerHTML;
+            if (next_time === "") {
+                insert_log("ไม่ให้โทรมาอีก", "terk1", mom_id);
+            }
+            else {
+                insert_log("นัดเวลาใหม่", next_time, mom_id);
+            }
+            window.location.href = "Main";
+            $('#exampleModalCenter_t').modal('hide');
+        }
+
+        function checkbox_calcel() {
+
+            let flexCheckDefault = document.getElementById("flexCheckDefault").checked;
+            if (flexCheckDefault == true) {
+
+                let action_std = document.getElementById("action_std");
+                action_std.innerHTML = "survy"; //update_customer
+            }
+
+        }
+
+        function checkbox_calcel1() {
+            let flexCheckDefault1 = document.getElementById("flexCheckDefault").checked;
+            if (flexCheckDefault == true) {
+
+                let action_std = document.getElementById("action_std");
+                action_std.innerHTML = "survy";//update_customer
+            }
+        }
+
+
+
+
+        function age_check() {
+
+            let time_baby = document.getElementById("time_baby").value;
+            let baby_age = document.getElementById("baby_age");
+            let text = age_cal2(time_baby);
+            baby_age.value = text;
+            let result_old_bond = document.getElementById("result_old_bond");
+            result_old_bond.innerHTML = text;
+
+        }
+
+        function twin_open() {
+            let twin_open_t = document.getElementById("twin_open_t").checked;
+            let twin = document.getElementById("twin");
+            if (twin_open_t == true) {
+                twin.style.display = "block";
+            }
+            else {
+                twin.style.display = "none";
+            }
+        }
+
+        function status_gender() {
+            let status_gender = document.getElementById("status_gender");
+            let result_gender = document.getElementById("result_gender");
+            result_gender.innerHTML = status_gender.value;
+        }
+
+        function twin() {
+            let twin = document.getElementById("twin");
+            let result_twin = document.getElementById("result_twin");
+            let result_num = document.getElementById("result_num");
+            result_twin.innerHTML = "yes";
+            result_num.innerHTML = twin.value;
+        }
+    </script>
+
+}

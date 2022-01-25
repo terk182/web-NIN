@@ -1,0 +1,726 @@
+﻿@page
+@using web_NIN.Models
+@model web_NIN.Pages.adminModel
+@{
+}
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">สถานะการติดต่อ</h3>
+
+    </div>
+    <div class="card-body">
+
+        <div class="form-group">
+            <table class="table">
+
+                <tbody>
+                    <tr>
+                        <th scope="row">จำนวนที่ต้องสำรวจ</th>
+                        <td>@ViewData["total_customer"]</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row">agent ทั้งหมด</th>
+                        <td>@ViewData["total_agent"]</td>
+
+                    </tr>
+                    <tr>
+                        <th scope="row">assign ไปแล้ว</th>
+                        <td>@ViewData["total_assign"]</td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">สถานะการติดต่อ</h3>
+
+    </div>
+    <div class="card-body">
+
+
+
+        <table id="example1" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>agent name</th>
+                    <th>จำนวนงาน</th>
+                    <th>สถานะ</th>
+                    <th>detail</th>
+
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var std in (IEnumerable<agent_model>)ViewData["agent_list"])
+                {
+                    <tr>
+                        <td>@std.remark</td>
+                        <td>@std.operatorName</td>
+                        <td></td>
+                        <td id="@std.id+A"></td>
+                        <td>
+                            <button type="button" class="btn btn-primary"  onclick="on_hand(@std.id)">
+                                on hand
+                            </button>
+
+                        </td>
+
+
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+
+
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">สถานะการติดต่อ</h3>
+
+    </div>
+    <div class="card-body">
+        <div class="form-group col-xs-3" id="sl_agent">
+            <label for="exampleSelectBorder">
+                เลือก Agent
+            </label>
+            <select class="custom-select form-control-border" id="agent_loop_id" onchange="health_problems_func()">
+                <option value="select">-เลือก-</option>
+                @foreach (var std in (IEnumerable<agent_model>)ViewData["agent_list"])
+                {
+                    <option value="@std.id">@std.operatorName</option>
+                }
+
+            </select>
+            <br />
+            <br />
+            <input type="number" min="0" class="form-control" id="count_loop">
+            <br />
+            <button type="button" class="btn btn-secondary" onclick="assing_job_1()">assing</button>
+        </div>
+
+
+        <table id="example2" class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>วันที่</th>
+                    <th>ชื่อ-นามสกุลผู้ติดต่อ</th>
+                    <th>เบอร์โทร</th>
+                    <th>Email</th>
+                    <th>status</th>
+                    <th>log</th>
+                    <th>edit</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var std in (IEnumerable<customer>)ViewData["mom_list"])
+                {
+                    <tr>
+                        <td>@std.no</td>
+                        <td>@std.date</td>
+                        <td>@std.name</td>
+                        <td>@std.phone</td>
+                        <td>@std.email</td>
+                        <td>
+                            @{
+                                var assign = std.agent_id;
+                                if (assign == "")
+                                {
+                                    <span class="badge badge-secondary">pending</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-primary">assign</span>
+                                }
+                            }
+                        </td>
+                        <td>""</td>
+                        <td>""</td>
+
+                    </tr>
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+<!-- /.card -->
+<!-- Button trigger modal -->
+<!-- Modal -->
+
+
+
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">ชุดข้อมูล</h3>
+
+    </div>
+    <p id="tel" hidden>@ViewData["tel"]</p>
+    <p id="mom_id" hidden>@ViewData["mom_id"]</p>
+    <div class="card-body">
+
+        <div class="form-group">
+            @*<label for="exampleSelectBorder">สถานะการติดต่อ</label>*@
+            <select class="custom-select form-control-border" id="max_min" onchange="select_page()">
+                <option value="select">เลือกชุดข้อมูล</option>
+                @foreach (var std in (IEnumerable<page_select>)ViewData["page_list"])
+                {
+                    <option value="@std.max_index">@std.min_index-@std.max_index</option>
+                }
+
+            </select>
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary" onclick="terk_t(1)">ค้นหา</button>
+</div>
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">ชุดข้อมูล</h3>
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <label>วัน-เวลา:</label>
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">
+                        <i class="far fa-calendar-alt"></i>
+                    </span>
+                </div>
+                <input type="text" class="form-control float-right" id="reservation">
+            </div>
+
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary" onclick="terk_t(2)">ค้นหา</button>
+</div>
+
+
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">assign</h3>
+
+    </div>
+
+
+
+
+
+
+    <div class="card-body" id="assign_bt" style="display: none;">
+        <div class="form-group col-xs-3" id="sl_agent">
+            <label for="exampleSelectBorder">
+                เลือก Agent
+            </label>
+            <select class="custom-select form-control-border" id="agent_loop_id" onchange="health_problems_func()">
+                <option value="select">-เลือก-</option>
+                @foreach (var std in (IEnumerable<agent_model>)ViewData["agent_list"])
+                {
+                    <option value="@std.id">@std.operatorName</option>
+                }
+
+            </select>
+            <br />
+            <br />
+            <input type="number" min="0" class="form-control" id="count_loop">
+            <br />
+            <button type="button" class="btn btn-secondary" onclick="assing_job()">assing</button>
+        </div>
+
+        <div class="form-group" id="terk_t_body">
+        </div>
+        <!-- /.card-body -->
+    </div>
+    <p id="sql_date">@ViewData["sql_date"]</p>
+</div>
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="ykk">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="card terk">
+                <p id="terk_tabel"></p>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(function () {
+
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+
+
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date picker
+            $('#reservationdate').datetimepicker({
+                format: 'L'
+            });
+
+            //Date and time picker
+            $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'MM/DD/YYYY hh:mm A'
+                }
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Timepicker
+            $('#timepicker').datetimepicker({
+                format: 'LT'
+            })
+
+            //Bootstrap Duallistbox
+            $('.duallistbox').bootstrapDualListbox()
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            $('.my-colorpicker2').on('colorpickerChange', function (event) {
+                $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+            })
+
+            $("input[data-bootstrap-switch]").each(function () {
+                $(this).bootstrapSwitch('state', $(this).prop('checked'));
+            })
+
+        })
+        // BS-Stepper Init
+        document.addEventListener('DOMContentLoaded', function () {
+            window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+        })
+
+        // DropzoneJS Demo Code Start
+        Dropzone.autoDiscover = false
+
+        // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+        var previewNode = document.querySelector("#template")
+        previewNode.id = ""
+        var previewTemplate = previewNode.parentNode.innerHTML
+        previewNode.parentNode.removeChild(previewNode)
+
+        var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+            url: "/target-url", // Set the url
+            thumbnailWidth: 80,
+            thumbnailHeight: 80,
+            parallelUploads: 20,
+            previewTemplate: previewTemplate,
+            autoQueue: false, // Make sure the files aren't queued until manually added
+            previewsContainer: "#previews", // Define the container to display the previews
+            clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+        })
+
+        myDropzone.on("addedfile", function (file) {
+            // Hookup the start button
+            file.previewElement.querySelector(".start").onclick = function () { myDropzone.enqueueFile(file) }
+        })
+
+        // Update the total progress bar
+        myDropzone.on("totaluploadprogress", function (progress) {
+            document.querySelector("#total-progress .progress-bar").style.width = progress + "%"
+        })
+
+        myDropzone.on("sending", function (file) {
+            // Show the total progress bar when upload starts
+            document.querySelector("#total-progress").style.opacity = "1"
+            // And disable the start button
+            file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
+        })
+
+        // Hide the total progress bar when nothing's uploading anymore
+        myDropzone.on("queuecomplete", function (progress) {
+            document.querySelector("#total-progress").style.opacity = "0"
+        })
+
+        // Setup the buttons for all transfers
+        // The "add files" button doesn't need to be setup because the config
+        // `clickable` has already been specified.
+        document.querySelector("#actions .start").onclick = function () {
+            myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
+        }
+        document.querySelector("#actions .cancel").onclick = function () {
+            myDropzone.removeAllFiles(true)
+        }
+        function assign_fun(id) {
+            //alert(id);
+
+            //    $.ajax({
+            //        type: 'GET',
+            //        url: "/admin?handler=Updatemom",
+            //        contentType: "application/json; charset=utf-8",
+            //        dataType: "json",
+            //        data: {
+            //            command: "tt",
+
+            //        },
+            //        beforeSend: function (xhr) {
+            //            xhr.setRequestHeader("XSRF-TOKEN",
+            //                $('input:hidden[name="__RequestVerificationToken"]').val());
+            //        },
+            //        success: function (datas) {
+            //            alert(datas)
+
+            //        }
+            //    });
+        }
+
+        function Dataget(command, min, max) {
+
+
+            $.ajax({
+                type: 'GET',
+                url: "/admin?handler=Updatemom",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    command: command,
+                    min_u: min,
+                    max_u: max
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    //console.log(datas);
+                    let terk_t_body = document.getElementById("terk_t_body");
+                    let assign_bt = document.getElementById("assign_bt");
+                    assign_bt.style.display = "block";
+                    mainObj = JSON.parse(datas);
+                    var table = "";
+                    //   table += "<div>";
+                    table += '<table class= "table table-bordered table-hover">';
+                    table += '<thead>';
+                    table += '<tr>';
+                    table += '<th>ลำดับ</th>';
+                    table += '<th>วันที่</th>';
+                    table += '<th>ชื่อ-นามสกุลผู้ติดต่อ</th>';
+                    table += '<th>เบอร์โทร</th>';
+                    table += '<th>Email</th>';
+                    table += '<th>การติดต่อ/ครั้ง</th>';
+                    table += '<th>Case</th>';
+                    table += '<th>สถานะ</th>';
+                    table += '</tr>';
+                    table += '</thead>';
+                    table += '<tbody>';
+                    var ii = 1;
+                    for (i = 0; i < mainObj.length; i++) {
+
+
+                        table += "<tr>";
+                        table += "<td>" + mainObj[i].customer_id + "</td>";
+                        table += "<td>" + mainObj[i].date + "</td>";
+                        table += "<td class = 'customer_name' >" + mainObj[i].name + " " + mainObj[i].lname + "</td>";
+                        table += "<td class = 'customer_phone' >" + mainObj[i].phone + "</td>";
+                        table += "<td>" + mainObj[i].email + "</td>";
+                        table += '<td><button type="button" class="btn btn-primary" onclick="view_logg(' + mainObj[i].customer_id + ')" >log</button></td>';
+
+                        if (mainObj[i].agent_id === "") {
+                            table += '<td><button type="button" class="btn btn-secondary" onclick="view_logg(' + mainObj[i].customer_id + ')" >not action</button></td>';
+                        }
+                        else {
+                            table += '<td><button type="button" class="btn btn-primary" onclick="view_logg(' + mainObj[i].customer_id + ')" >edit</button></td>';
+                        }
+                        table += "<td class = 'customer_id' hidden>" + mainObj[i].customer_id + "</td>";
+                        table += "<td class = 'agent_id' hidden>" + mainObj[i].agent_id + "</td>";
+
+
+                        table += "</tr>";
+
+                        ii++;
+                    }
+                    table += "</tbody></table>";
+                    //  table += "</div>";
+                    terk_t_body.innerHTML = table;
+                }
+            });
+        }
+
+        function terk_t(id) {
+
+            switch (id) {
+                case 1:
+                    let max_min = document.getElementById("max_min");
+                    let terk = max_min.options[max_min.selectedIndex].text;
+                    const myArray = terk.split("-");
+                    //alert("min-->" + myArray[0] + "max-->" + myArray[1]);
+                    Dataget("id", myArray[0], myArray[1]);
+                    break;
+                case 2:
+                    let reservation = document.getElementById("reservation").value;
+                    const myArray1 = reservation.split("-");
+                    let txt_strat = "";
+                    let txt_stop = "";
+                    const myArray2 = myArray1[0].split("/");
+                    const myArray3 = myArray1[1].split("/");
+                    let ggg = myArray2[2].substring(0, 4);
+                    txt_strat = ggg + "-" + myArray2[0] + "-" + myArray2[1];
+                    alert(txt_strat);
+                    let gggg = myArray3[2].substring(0, 4);
+                    let gggg1 = myArray3[0].substring(1, 3);
+                    txt_stop = gggg + "-" + gggg1 + "-" + myArray3[1];
+                    //  alert("stert-->" + txt_strat + "stop-->" + txt_stop);
+                    //txt = myArray1[0].replace("/", "-");
+                    //for (i = 0; i < 3; i++) {
+                    //    txt = txt.replace("/", "-");
+                    //}
+                    //alert("start->" + txt_strat + "stop->" + txt_stop);
+                    Dataget("date", txt_strat, txt_stop);
+                    break;
+                default:
+                // code block
+            }
+        }
+        function assing_job() {
+
+            let count_loop = document.getElementById("count_loop").value;
+            let agent_loop_id = document.getElementById("agent_loop_id").value;
+            let agent_loop_text = document.getElementById("agent_loop_id");
+            let terk = agent_loop_text.options[agent_loop_text.selectedIndex].text;
+            let customer_id = document.querySelectorAll(".customer_id");
+            let customer_name = document.querySelectorAll(".customer_name");
+            let customer_phone = document.querySelectorAll(".customer_phone");  //agent_id
+            let agent_id = document.querySelectorAll(".agent_id");  //agent_id
+            //console.log(customer_id);
+            alert("cl-->" + count_loop + "--ag-->" + agent_loop_id);
+            var num_loop = parseInt(count_loop);
+            console.log(customer_id.length);
+            var jsonArr = [];
+            let tttt = 0;
+            for (i = 0; i < customer_id.length; i++) {
+                console.log(agent_id[i].innerHTML);
+                if (agent_id[i].innerHTML === "") {
+                    jsonArr.push({
+                        create_operator_name: terk,
+                        operatorID: agent_loop_id,
+                        custommerID: customer_id[i].innerHTML,
+                        custommer_name: customer_name[i].innerHTML,
+                        phone: customer_phone[i].innerHTML
+                    });
+                    tttt++;
+                    console.log(tttt);
+                }
+                if (tttt >= num_loop) {
+                    break;
+                }
+
+            }
+
+
+
+            const myJSON = JSON.stringify(jsonArr);
+            console.log(myJSON);
+            $.ajax({
+                type: 'GET',
+                url: "/admin?handler=Assign",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    command: myJSON,
+
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    console.log(datas);
+
+                }
+            });
+        }
+
+        function assing_job_1() {
+
+            let count_loop = document.getElementById("count_loop").value;
+            let agent_loop_id = document.getElementById("agent_loop_id").value;
+            let agent_loop_text = document.getElementById("agent_loop_id");
+            let terk = agent_loop_text.options[agent_loop_text.selectedIndex].text;
+            let sql_date = document.getElementById("sql_date").innerHTML;
+            alert("loop : " + count_loop + "  agent id : " + agent_loop_id + " agent name :" + terk + " date : " + sql_date);
+
+
+            // console.log(myJSON);
+            $.ajax({
+                type: 'GET',
+                url: "/admin?handler=Assign2",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    count: count_loop,
+                    agent_id: agent_loop_id,
+                    ageni_name: terk,
+                    date_txt: sql_date
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    alert(datas);
+
+                }
+            });
+        }
+
+        function terk_tt() {
+
+            $.ajax({
+                type: 'POST',
+                url: "/admin?handler=Terk",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: {
+                    "RequestVerificationToken": $('input[name = __RequestVerificationToken]').val()
+                },
+                data: JSON.stringify({
+                    command: "ittipon",
+
+
+                }),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    alert(datas);
+
+                }
+            });
+
+        }
+        function on_hand(id) {
+            let terk_tabel = document.getElementById("terk_tabel");
+            $.ajax({
+                type: 'GET',
+                url: "/admin?handler=Takelog",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    id: id,
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    customer_Obj = JSON.parse(datas);
+                    //console.log(customer_Obj)
+                    var table = "";
+
+                    table += "<div>";
+                    table += "<table class= 'table'>";
+                    // table += "<thead>";
+                    table += "<tr>";
+                    table += "<th>No</th>";
+                    table += "<th>create_date</th>";
+                    table += "<th>name</th>";
+                    table += "<th>numberOfRepeat</th>";
+                    table += "<th></th>";
+
+                 
+                    table += "</tr>";
+                    // table += "</thead>";
+                    table += "<tbody>";
+
+
+
+                    for (i = 0; i < customer_Obj.length; i++) {
+                        table += "<tr>";
+                        table += "<td>" + customer_Obj[i].no + "</td>";
+                        table += "<td>" + customer_Obj[i].date + "</td>";
+                        table += "<td>" + customer_Obj[i].mom_name + "</td>";
+                        table += "<td>" + customer_Obj[i].status + "</td>";
+                        table += "<td>" + customer_Obj[i].numberOfRepeat + "</td>"; //<button onclick="window.location.href='https://w3docs.com';">
+
+                       
+                        table += "</tr>";
+                    }
+
+
+                    table += "</tbody>";
+                    table += "</table></div>";
+                    terk_tabel.innerHTML = table
+                    $('#ykk').modal('show')
+                }
+            });
+
+        }
+    </script>
+}

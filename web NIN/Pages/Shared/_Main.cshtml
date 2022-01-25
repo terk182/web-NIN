@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from dleohr.dreamguystech.com/template-1/dleohr-horizontal/leave.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 14 Jan 2022 02:21:54 GMT -->
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Leave Page</title>
+
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.png">
+
+
+    <link href="~/css/bootstrap.min.css" rel="stylesheet" />
+
+    <link href="~/css/lnr-icon.css" rel="stylesheet" />
+
+    <link href="~/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+
+    <link href="~/vendor/nucleo/css/nucleo.css" rel="stylesheet" />
+
+    <link href="~/plugins/select2/css/select2.min.css" rel="stylesheet" />
+
+    <link href="~/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="~/css/argon.css" rel="stylesheet" />
+
+    <style>
+        .terk {
+            padding: 20px;
+        }
+    </style>
+
+    <!--[if lt IE 9]>
+            <script src="assets/js/html5shiv.min.js"></script>
+            <script src="assets/js/respond.min.js"></script>
+            <![endif]-->
+</head>
+<body>
+
+    <div class="inner-wrapper">
+
+        @*<div id="loader-wrapper">
+                <div class="loader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>*@
+
+        <div class="page-wrapper">
+            <div class="header bg-primary pb-6">
+                <div class="container-fluid">
+                    <div class="header-body">
+                        <div class="row align-items-center py-4">
+                            <div class="col-lg-6 col-7">
+                                <h6 class="h2 text-white d-inline-block mb-0">Default</h6>
+                                <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                                    <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                                        <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                                        <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">Default</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                            <div class="col-lg-6 col-5 text-right">
+                                <a href="#" class="btn btn-sm btn-neutral">New</a>
+                                <a href="#" class="btn btn-sm btn-neutral">Filters</a>
+                            </div>
+                        </div>
+                        <!-- Card stats -->
+
+                    </div>
+                </div>
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <div class=" col ">
+                            <div class="card">
+                                @RenderBody()
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar-overlay" id="sidebar_overlay"></div>
+
+        <div class="modal fade" id="delete">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-body">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title mb-3">Are You Sure Want to Delete?</h4>
+                        <button type="button" class="btn btn-danger ctm-border-radius text-white text-center mb-2 mr-3" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-theme button-1 ctm-border-radius text-white text-center mb-2" data-dismiss="modal">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="~/js/jquery-3.2.1.min.js"></script>
+
+        <script src="~/js/popper.min.js"></script>
+
+        <script src="~/js/bootstrap.min.js"></script>
+
+
+        <script src="~/plugins/theia-sticky-sidebar/ResizeSensor.js"></script>
+
+        <script src="~/plugins/theia-sticky-sidebar/theia-sticky-sidebar.js"></script>
+
+
+        <script src="~/plugins/select2/js/select2.min.js"></script>
+
+        <script src="~/plugins/moment/moment.min.js"></script>
+        <script src="~/js/bootstrap-datetimepicker.min.js"></script>
+
+        @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

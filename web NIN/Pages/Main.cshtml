@@ -1,0 +1,537 @@
+﻿@page
+@using web_NIN.Models
+@model web_NIN.Pages.MainModel
+@{
+    ViewData["Title"] = "Home page";
+    Layout = "~/Pages/Shared/_Main.cshtml";
+}
+
+<div class="text-center">
+    <p id="user" hidden>@ViewData["user"]</p>
+    <p id="ppp" hidden>@ViewData["password"]</p>
+    <p id="login" hidden>@ViewData["login"]</p>
+    <br />
+
+</div>
+<div class="card col-md-12">
+    <div class="card-header">
+        <h5 class="card-title">ค้นหาข้อมูล</h5>
+    </div>
+    <div class="card-body">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="validationTooltip01">ชื่อ-นามสกุล</label>
+                <input type="text" class="form-control form-control-sm" autocomplete="on" onkeyup="bt_Search_t(2)" id="name_txt">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label for="validationTooltip01">เบอร์โทร</label>
+                <input type="text" class="form-control form-control-sm" onkeyup="bt_Search_t(3)" id="name_phone">
+            </div>
+            <div class="col-md-2 mb-2">
+                <label for="validationTooltip01">วันเริ่ม</label>
+                <input type="text" class="form-control form-control-sm datetimepicker" id="reservation">
+
+            </div>
+            <div class="col-md-2 mb-2">
+                <label for="validationTooltip01">ถึงวันที่</label>
+                <input type="text" class="form-control form-control-sm datetimepicker" id="reservation1">
+            </div>
+        </div>
+        <button type="button" class="btn btn-outline-info" onclick="bt_Search_t(1)">ค้นหา</button>
+    </div>
+</div>
+
+<div class="card col-md-12" >
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover" id="myTable">
+                <thead>
+                    <tr>
+                        <th>ลำดับ</th>
+                        <th>วันที่</th>
+                        <th>ชื่อ-นามสกุลผู้ติดต่อ</th>
+                        <th>เบอร์โทร</th>
+                        <th>Email</th>
+                        <th>การติดต่อ/ครั้ง</th>
+                        <th>Case</th>
+                        <th>สถานะ</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var std in (IEnumerable<customer>)ViewData["customer"])
+                    {
+                        var status = std.status;
+                        var status_detail = std.detail;
+                        int num = Int16.Parse(@std.replace);
+                        num = num + 1;
+
+
+
+                        var str_l = std.status;
+                        // (status.ToLower() != "complete")
+                        var txt_name = std.name + " " + std.lname;
+                        var bt_txt = "";
+                        if (str_l == "pending")
+                        {
+                            bt_txt = "First call";
+                        }
+                        else
+                        {
+                            bt_txt = str_l;
+                        }
+                        if (str_l == "Not Available" || str_l == "pending")
+                        {
+
+                            if (status_detail.Length > 16 || str_l == "pending")
+                            {
+                                <tr>
+                                    <td>@std.no</td>
+                                    <td>@std.date</td>
+                                    <td>@txt_name</td>
+                                    <td>@std.phone</td>
+                                    <td>@std.email</td>
+                                    <td>@std.replace</td>
+
+
+
+                                    <td><button type="button" class="btn btn-info" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="view_log(@std.customer_id)">log</button></td>
+                                    @{
+
+
+                                        var txt = "";
+                                        if (status == "")
+                                        {
+                                            txt = "pending";
+                                        }
+                                        else
+                                        {
+                                            if (status_detail.Length > 1)
+                                            {
+                                                txt = "โทรครั้งต่อไป " + status_detail.Substring(13);
+                                            }
+                                            else
+                                            {
+                                                txt = status;
+                                            }
+
+                                        }
+                                        if (num > 0)
+                                        {
+                                            <td>
+                                                <a href="Outbound?id=@std.customer_id&tel=@std.phone&replace=@num" class="btn btn-secondary" role="button" aria-pressed="true">
+                                                    @txt <span class="badge badge-light">@std.replace</span>
+                                                    <span class="sr-only">unread messages</span>
+                                                </a>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td><a href="Outbound?id=@std.customer_id&tel=@std.phone&replace=@num" class="btn btn-primary" role="button" aria-pressed="true">@bt_txt</a></td>
+                                        }
+
+                                    }
+
+                                </tr>
+                            }
+
+
+
+
+                        }
+
+                    }
+
+
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <!-- /.card-body -->
+
+
+
+
+
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="card terk">
+                    <p id="terk_tabel"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="terkModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New message</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">หมายเหตุ:</label>
+                        <textarea class="form-control" id="message-text"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="terkk()">Send message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    @*@if (ViewData["Message"] != null)
+        {
+            <script type="text/javascript">
+                    window.onload = function () {
+                        alert("@ViewData["Message"]");
+                    };
+            </script>
+        }*@
+
+        <script>
+            $(function () {
+
+                $("#example1").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+                $('#example2').DataTable({
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": false,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "responsive": true,
+                });
+
+
+                //Initialize Select2 Elements
+                $('.select2').select2()
+
+                //Initialize Select2 Elements
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+
+                //Datemask dd/mm/yyyy
+                $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+                //Datemask2 mm/dd/yyyy
+                $('#datemask2').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+                //Money Euro
+                $('[data-mask]').inputmask()
+
+                //Date picker
+                $('#reservationdate').datetimepicker({
+                    format: 'L'
+                });
+
+                //Date and time picker
+                $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+
+                //Date range picker
+                $('#reservation').daterangepicker()
+
+                //Date range picker with time picker
+                $('#reservationtime').daterangepicker({
+                    timePicker: true,
+                    timePickerIncrement: 30,
+                    locale: {
+                        format: 'DD/MM/YYYY'
+                    }
+                })
+                //Date range as a button
+                $('#daterange-btn').daterangepicker(
+                    {
+                        ranges: {
+                            'Today': [moment(), moment()],
+                            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                            'This Month': [moment().startOf('month'), moment().endOf('month')],
+                            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                        },
+                        startDate: moment().subtract(29, 'days'),
+                        endDate: moment()
+                    },
+                    function (start, end) {
+                        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                    }
+                )
+
+                //Timepicker
+                $('#timepicker').datetimepicker({
+                    format: 'LT'
+                })
+
+                //Bootstrap Duallistbox
+                $('.duallistbox').bootstrapDualListbox()
+
+                //Colorpicker
+                $('.my-colorpicker1').colorpicker()
+                //color picker with addon
+                $('.my-colorpicker2').colorpicker()
+
+                $('.my-colorpicker2').on('colorpickerChange', function (event) {
+                    $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+                })
+
+                $("input[data-bootstrap-switch]").each(function () {
+                    $(this).bootstrapSwitch('state', $(this).prop('checked'));
+                })
+
+            })
+            // BS-Stepper Init
+            document.addEventListener('DOMContentLoaded', function () {
+                window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+            })
+
+            // DropzoneJS Demo Code Start
+            Dropzone.autoDiscover = false
+
+            // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+            var previewNode = document.querySelector("#template")
+            previewNode.id = ""
+            var previewTemplate = previewNode.parentNode.innerHTML
+            previewNode.parentNode.removeChild(previewNode)
+
+            var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+                url: "/target-url", // Set the url
+                thumbnailWidth: 80,
+                thumbnailHeight: 80,
+                parallelUploads: 20,
+                previewTemplate: previewTemplate,
+                autoQueue: false, // Make sure the files aren't queued until manually added
+                previewsContainer: "#previews", // Define the container to display the previews
+                clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+            })
+
+            myDropzone.on("addedfile", function (file) {
+                // Hookup the start button
+                file.previewElement.querySelector(".start").onclick = function () { myDropzone.enqueueFile(file) }
+            })
+
+            // Update the total progress bar
+            myDropzone.on("totaluploadprogress", function (progress) {
+                document.querySelector("#total-progress .progress-bar").style.width = progress + "%"
+            })
+
+            myDropzone.on("sending", function (file) {
+                // Show the total progress bar when upload starts
+                document.querySelector("#total-progress").style.opacity = "1"
+                // And disable the start button
+                file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
+            })
+
+            // Hide the total progress bar when nothing's uploading anymore
+            myDropzone.on("queuecomplete", function (progress) {
+                document.querySelector("#total-progress").style.opacity = "0"
+            })
+
+            // Setup the buttons for all transfers
+            // The "add files" button doesn't need to be setup because the config
+            // `clickable` has already been specified.
+            document.querySelector("#actions .start").onclick = function () {
+                myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
+            }
+            document.querySelector("#actions .cancel").onclick = function () {
+                myDropzone.removeAllFiles(true)
+            }
+
+
+            function view_log(id) {
+                let terk_tabel = document.getElementById("terk_tabel");
+                $.ajax({
+                    type: 'GET',
+                    url: "/Main?handler=Takelog",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {
+                        id: id,
+
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    success: function (datas) {
+                        customer_Obj = JSON.parse(datas);
+                        //console.log(customer_Obj)
+                        var table = "";
+
+                        table += "<div>";
+                        table += "<table class= 'table'>";
+                        // table += "<thead>";
+                        table += "<tr>";
+                        table += "<th>No</th>";
+                        table += "<th>create_date</th>";
+                        table += "<th>create_time</th>";
+                        table += "<th>action</th>";
+                        table += "<th>status</th>";
+                        table += "<th>remark</th>";
+                        table += "<th>datail</th>";
+                        table += "<th>add</th>";
+                        table += "</tr>";
+                        // table += "</thead>";
+                        table += "<tbody>";
+
+
+
+                        for (i = 0; i < customer_Obj.length; i++) {
+                            table += "<tr>";
+                            table += "<td>" + customer_Obj[i].id + "</td>";
+                            table += "<td>" + customer_Obj[i].create_date + "</td>";
+                            table += "<td>" + customer_Obj[i].create_time + "</td>";
+                            table += "<td>" + customer_Obj[i].acton + "</td>";
+                            table += "<td>" + customer_Obj[i].status + "</td>"; //<button onclick="window.location.href='https://w3docs.com';">
+                            table += "<td>" + customer_Obj[i].remark + "</td>";
+                            table += "<td>" + customer_Obj[i].datail + "</td>";
+                            table += "<td><button type='button' class='btn btn-primary' onclick=remake_update(" + customer_Obj[i].mom_id + ")>Add remark</button></td>";
+                            table += "</tr>";
+                        }
+
+
+                        table += "</tbody>";
+                        table += "</table></div>";
+                        terk_tabel.innerHTML = table
+                    }
+                });
+            }
+            function search_txt() {
+                let name_txt = document.getElementById("name_txt").value;
+                let name_txt_in = document.getElementById("name_txt")
+                var inputs = document.getElementsByTagName('input');
+
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].type.toLowerCase() == 'search') {
+                        //  alert(inputs[i].value);
+                        inputs[i].value = name_txt;
+                        name_txt_in.value = name_txt;
+                    }
+                }
+            }
+            function search_phone() {
+
+                let name_phone = document.getElementById("name_phone").value;
+                let name_phone_in = document.getElementById("name_phone")
+                var inputs = document.getElementsByTagName('input');
+
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].type.toLowerCase() == 'search') {
+                        //  alert(inputs[i].value);
+                        inputs[i].value = name_phone;
+                        name_phone_in.value = name_phone;
+                    }
+                }
+            }
+            var iddd;
+            function remake_update(id) {
+                $('#terkModal').modal('show')
+                iddd = id;
+            }
+
+            function terkk() {
+                //alert(iddd);
+                let message_text = document.getElementById("message-text").value;
+                let sql = "UPDATE nin_survey_log SET remark = '" + message_text + "' where id =" + iddd;
+                $.ajax({
+                    type: 'GET',
+                    url: "/Main?handler=Updatelog",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {
+                        command: sql,
+
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    success: function (datas) {
+                        alert(datas)
+
+                    }
+                });
+                $('#terkModal').modal('hide')
+            }
+
+
+
+
+            function name_Search(id) {
+                var input, filter, table, tr, td, i, txtValue;
+
+
+                switch (id) {
+                    case 1:
+
+
+                        break;
+                    case 2:
+                        input = document.getElementById("name_txt");
+                        break;
+                    case 3:
+                        input = document.getElementById("name_phone");
+                        break;
+
+                    default:
+                    // code block reservation
+                }
+
+
+
+                filter = input.value.toUpperCase();
+                table = document.getElementById("myTable");
+                tr = table.getElementsByTagName("tr");
+                for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName("td")[id];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                            tr[i].style.display = "";
+                        } else {
+                            tr[i].style.display = "none";
+                        }
+                    }
+                }
+            }
+
+            function bt_Search_t(id) {
+
+                switch (id) {
+                    case 1:
+
+                        let input_start = document.getElementById("reservation");
+                        let input_stop = document.getElementById("reservation1");
+                        alert("start:" + input_start.value + "stop:" + input_stop.value);
+                        break;
+                    case 2:
+                        name_Search(id)
+                        break;
+                    case 3:
+                        name_Search(id)
+                        break;
+
+                    default:
+                    // code block reservation
+                }
+
+
+
+            }
+        </script>
+   

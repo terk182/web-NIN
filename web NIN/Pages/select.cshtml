@@ -1,0 +1,83 @@
+﻿@page
+@using web_NIN.Models
+@model web_NIN.Pages.selectModel
+@{
+}
+
+<div class="wrapper">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+        <!-- Icon -->
+        <div class="fadeIn">
+            <img src="src/logo.jpg" id="icon" alt="User Icon" height="200" />
+        </div>
+
+        <!-- Login Form -->
+        <form method="post" class="center terk">
+            <div class="card card-warning">
+                <div class="card-header">
+                    <h3 class="card-title"></h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+
+                            <div class="form-group">
+                                <label>view agent</label>
+                                <select class="form-control" onchange="get_agent_select()" id="agent">
+
+                                    <option value="select">-agent-</option>
+                                    @foreach (var std in (IEnumerable<agent_model>)ViewData["agent_list"])
+                                    {
+                                        <option value="@std.operatorName">@std.operatorName</option>
+                                    }
+                                </select>
+                                <br />
+                                <button type="button" class="btn btn-secondary" onclick="next()">view</button>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>dashboard assign</label><br />
+                                <a href="assign" class="btn btn-info" role="button" aria-pressed="true">Next</a>
+                            </div>
+                            <div class="form-group">
+                            <label>edit and report</label><br />
+                            <a href="edit" class="btn btn-info" role="button" aria-pressed="true">Next</a>
+                        </div>
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <!-- /.card-body -->
+            </div>
+
+
+
+        </form>
+
+
+
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        var st_agent;
+        function get_agent_select() {
+            let agent = document.getElementById("agent").value;
+            //alert("agent");
+            st_agent = agent;
+        }
+        function next() {
+            window.location.href = "Main?agent=" + st_agent;
+
+        }
+    </script>
+
+}
