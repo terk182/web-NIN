@@ -17,9 +17,10 @@ namespace web_NIN.Pages
         public string customer_name { get; set; } = "";
         public string customer_phone { get; set; } = "";
         public string customer_idd = "";
-        public IActionResult OnGet(int id,string tel,string replace)
+        public IActionResult OnGet(int id,string tel,string replace,string st)
         {
             var login_status = "";
+            ViewData["st"] = st;
             ViewData["replace"] = replace;
             ViewData["mom_id"] = id.ToString();
             ViewData["user"] = HttpContext.Session.GetString("username");
@@ -241,12 +242,14 @@ namespace web_NIN.Pages
         }
 
         [HttpGet]
-        public IActionResult OnGetUpdate(string table, string header, string value,string customer, string replace,string status,string upd)
+        public IActionResult OnGetUpdate(string table, string header, string value,string customer, string replace,string status,string upd,string std)
         {
             var date_ = DateTime.Now.ToString("yyyy-MM-dd");
             var time_ = DateTime.Now.ToString("HH:mm:ss");
             //var h = "(" + header + ",create_date,create_time)";
             //var v = "(" + value + ",'" + date_ + "','" + time_ + "')";
+
+            var std1 = std;
             var h = "(" + header + ")";
             var v = "(" + value + ")";
             var command = "INSERT INTO " + table + h + " VALUES "+ v;
@@ -267,6 +270,14 @@ namespace web_NIN.Pages
 
             var _update_to_assign = new update_to_assign();
             _update_to_assign.set_value(update_command);
+            
+            if(std == "true")
+            {
+                var update_command2 = "UPDATE nin_assign_second SET status = '" + status + "', statusOfCase = 'Reachable', numberOfRepeat = '" + replace + "' WHERE custommerID = '" + customer + "'";
+                _update_to_assign.set_value(update_command2);
+            }
+
+
             var user = HttpContext.Session.GetString("username");
             var _insert_log = new insert_log();
             var add_log = new Logmodel();

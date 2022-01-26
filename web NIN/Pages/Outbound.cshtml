@@ -23,7 +23,8 @@
     </div>
     <p id="tel" hidden>@ViewData["tel"]</p>
     <p id="mom_id" hidden>@ViewData["mom_id"]</p>
-    <p id="agent" hidden>@ViewData["agent"]</p>
+    <p id="agent" hidden>@ViewData["agent"]</p> 
+    <p id="st" hidden>@ViewData["st"]</p>
     <div class="card-body">
 
 
@@ -237,11 +238,11 @@
                     </label>
                 </div>
                 <select class="custom-select form-control-borde tk_inputr" id="twin" onchange="twin()" style="display: none;">
-                    <option value="0">--เลือกขข</option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
+                    <option value="0">--เลือ--</option>
+                    <option value="1">2</option>
+                    <option value="2">3</option>
+                    <option value="3">4</option>
+                    <option value="4">5</option>
                 </select>
 
                 @* ---------------------------------ช่องรับน้องแฝด------------------------------------- *@
@@ -2707,6 +2708,9 @@
             let save_st = document.getElementById("save_st");
 
 
+            let st = document.getElementById("save_st").innerHTML;
+
+
             if (result_gender_y != "0" || as_num_t == "4") {
                 let result;
                 let header;
@@ -2902,7 +2906,8 @@
                                 customer: cus_id,
                                 replace: replace,
                                 status: as_status,
-                                upd: command_update
+                                upd: command_update,
+                                std: st
                             },
                             beforeSend: function (xhr) {
                                 xhr.setRequestHeader("XSRF-TOKEN",

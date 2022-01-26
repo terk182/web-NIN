@@ -7,33 +7,34 @@ using web_NIN.Models;
 
 namespace web_NIN.Services
 {
-    public class update_to_new_assign_all
+    public class insert_assign_2
     {
         public bool set_value(List<RequestObj> data_model)
         {
             var txt = new Db_connect();
-
+            var ststus = "pending";
             using (SqlConnection sqlconn = new SqlConnection(txt.Db_connect_string()))
             {
 
                 var sql = "";
                 SqlCommand command;
-                //var date_ = DateTime.Now.ToString("yyyy-MM-dd");
-                //var time_ = DateTime.Now.ToString("HH:mm:ss");
 
-                //sql = "insert into dbo.nin_assign (create_date, create_time, create_operator_name, operatorID,custommerID,customer_name,phone,status ) values ";
-                // sql = "update dbo.nin_assign SET  update_date = '" + date_ + "', update_time = '" + time_ + "', update_operator_name = '" + data_model[0].create_operator_name + "', operatorID = ";
-                 sql = "update dbo.nin_assign_second SET update_operator_name = '" + data_model[0].create_operator_name + "', operatorID = ";
-                sql += data_model[0].operatorID;
-                sql += data_model[0].operatorID;
-                sql += " where custommerID IN";
+
+                sql = "insert into dbo.nin_assign_second ( create_operator_name, operatorID,custommerID,customer_name,phone,status ) values ";
+                
 
                 var sql_value = "";
                 for (int i = 0; i < data_model.Count; i++)
                 {
-
-                    sql_value += ",'" + data_model[i].custommerID + "'";
-
+                    sql_value += ",(";
+                    //sql_value += "'" + DateTime.Now.ToString("HH:mm:ss") + "',";
+                    sql_value += "'" + data_model[i].create_operator_name + "',";
+                    sql_value += "'" + data_model[i].operatorID + "',";
+                    sql_value += "'" + data_model[i].custommerID + "',";
+                    sql_value += "'" + data_model[i].custommer_name + "',";
+                    sql_value += "'" + data_model[i].phone + "',";
+                    sql_value += "'" + ststus + "')";
+                   
 
                     //command.Parameters.AddWithValue("@create_operator_name", data_model[i].custommer_name);
                     //command.Parameters.AddWithValue("@operatorID", data_model[i].operatorID);
@@ -44,7 +45,7 @@ namespace web_NIN.Services
 
 
                 }
-                sql = sql + "(" + sql_value.Substring(1) + ")";
+                sql = sql + sql_value.Substring(1);
                 command = new SqlCommand(sql, sqlconn);
                 sqlconn.Open();
                 command.ExecuteNonQuery();

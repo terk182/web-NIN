@@ -8,7 +8,7 @@ using web_NIN.Models;
 
 namespace web_NIN.Services
 {
-    public class service_customer
+    public class service_customer2
     {
 
 
@@ -18,7 +18,7 @@ namespace web_NIN.Services
         public List<customer> get_customer(string agen_id)
         {
             var customer_list = new List<customer>();
-            var customer_list2 = new List<customer>();
+
             var customer_list_check = new List<customer>();
             var _customer = new customer();
             var txt = new Db_connect();
@@ -32,8 +32,9 @@ namespace web_NIN.Services
                 SqlCommand command;
                 SqlDataReader dataReader;
 
+            
 
-                sql = "SELECT  * from tbNIN_CRM_Outbound t1 WHERE t1.agent_id ='" + agen_id + "'";
+                sql = "SELECT t2.tbGigya_registerDate,t2.profile_firstName,t2.profile_lastName,t2.profile_mobile,t2.profile_email,t2.tbCRM_id from nin_assign_second t1 LEFT join tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID   WHERE t1.status != 'Complete' and  t1.operatorID ='" + agen_id + "'";
                 command = new SqlCommand(sql, sqlconn);
                 dataReader = command.ExecuteReader();
                 int no = 1;
@@ -90,8 +91,7 @@ namespace web_NIN.Services
                 no = 1;
                 foreach (var value in customer_list)
                 {
-                    if (value.detail.Length > 16)
-                    {
+                    
                         customer_list_check.Add(new customer
                         {
                             no = no++,
@@ -108,31 +108,9 @@ namespace web_NIN.Services
                             customer_id = value.customer_id
 
                         });
-                    }
+                    
                 }
-                foreach (var value in customer_list)
-                {
-                    if (value.detail.Length < 16)
-                    {
-                        customer_list_check.Add(new customer
-                        {
-                            no = no++,
-                            date = value.date,
-                            name = value.name,
-                            lname = value.lname,
-                            phone = value.phone,
-                            email = value.email,
-                            replace = value.replace,
-
-                            case_no = value.case_no,
-                            detail = value.detail,
-                            status = value.status,
-                            customer_id = value.customer_id
-
-                        });
-                    }
-                }
-
+                
 
 
 

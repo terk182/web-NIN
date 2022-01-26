@@ -100,6 +100,7 @@
 
 
                                         var txt = "";
+                                        var bt_class = "btn btn-primary";
                                         if (status == "")
                                         {
                                             txt = "pending";
@@ -108,7 +109,17 @@
                                         {
                                             if (status_detail.Length > 1)
                                             {
-                                                txt = "โทรครั้งต่อไป " + status_detail.Substring(13);
+                                                if(std.catagory == "0")
+                                                {
+                                                    txt = "โทรครั้งต่อไป " + status_detail.Substring(13);
+                                                    bt_class = "btn btn-primary";
+                                                }
+                                                else
+                                                {
+                                                    txt = "เป็นการโทรครั้งที่สอง";
+                                                    bt_class = "btn btn-warning";
+                                                }
+
                                             }
                                             else
                                             {
@@ -119,7 +130,7 @@
                                         if (num > 0)
                                         {
                                             <td>
-                                                <a href="Outbound?id=@std.customer_id&tel=@std.phone&replace=@num" class="btn btn-secondary" role="button" aria-pressed="true">
+                                                <a href="Outbound?id=@std.customer_id&tel=@std.phone&replace=@num&st=@std.catagory" class="@bt_class" role="button" aria-pressed="true">
                                                     @txt <span class="badge badge-light">@std.replace</span>
                                                     <span class="sr-only">unread messages</span>
                                                 </a>

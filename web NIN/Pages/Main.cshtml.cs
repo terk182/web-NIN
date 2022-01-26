@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using web_NIN.Models;
 using web_NIN.Services;
 
 namespace web_NIN.Pages
@@ -42,14 +43,77 @@ namespace web_NIN.Pages
 
 
 
-            var terk = new service_customer();
-
-
-
-            var list_customer = terk.get_customer(agent_id.id.ToString());
             
 
-            ViewData["customer"] = list_customer;
+
+
+            var customer_list_check = new List<customer>();
+
+            var terk = new service_customer();
+
+            var list_customer = terk.get_customer(agent_id.id.ToString());
+
+            int no = 1;
+            foreach (var value in list_customer)
+            {
+           
+                    customer_list_check.Add(new customer
+                    {
+                        no = no++,
+                        date = value.date,
+                        name = value.name,
+                        lname = value.lname,
+                        phone = value.phone,
+                        email = value.email,
+                        replace = value.replace,
+
+                        case_no = value.case_no,
+                        detail = value.detail,
+                        status = value.status,
+                        customer_id = value.customer_id,
+                        catagory = "0"
+
+                    });
+                
+            }
+
+
+            var terk2 = new service_customer2();
+
+            var list_customer2 = terk2.get_customer(agent_id.id.ToString());
+
+
+            foreach (var value in list_customer2)
+            {
+                
+                    customer_list_check.Add(new customer
+                    {
+                        no = no++,
+                        date = value.date,
+                        name = value.name,
+                        lname = value.lname,
+                        phone = value.phone,
+                        email = value.email,
+                        replace = value.replace,
+
+                        case_no = value.case_no,
+                        detail = value.detail,
+                        status = "pending",
+                        customer_id = value.customer_id,
+                        catagory = "1"
+                    });
+               
+            }
+
+
+
+
+
+
+
+
+
+            ViewData["customer"] = customer_list_check;
 
             if (login_status != "true")
             {

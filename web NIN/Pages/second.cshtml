@@ -1,0 +1,318 @@
+﻿@page
+@using web_NIN.Models
+
+@model web_NIN.Pages.secondModel
+@{
+}
+<div class="card-body">
+
+    <div class="form-group col-xs-3" id="sl_agent">
+        <label for="exampleSelectBorder">
+            เลือกข้อมูล
+        </label>
+        <select class="custom-select form-control-border" id="call_num" onchange="health_problems_func()">
+            <option value="select">-เลือก-</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="3">4</option>
+
+        </select>
+        <br />
+        <br />
+        <button type="button" class="btn btn-secondary" onclick="fond_data()">ค้นหา</button>
+    </div>
+    <div class="form-group col-xs-3" id="sl_tt" style="display: none;">
+        <label for="exampleSelectBorder">
+            เลือก Agent
+        </label>
+        <select class="custom-select form-control-border" id="agent_loop_id" onchange="health_problems_func()">
+            <option value="select">-เลือก-</option>
+            @foreach (var std in (IEnumerable<agent_model>)ViewData["agent_list"])
+            {
+                <option value="@std.id">@std.operatorName</option>
+            }
+
+        </select>
+        <br />
+        <br />
+        <button type="button" class="btn btn-secondary" onclick="insert_data()">assing</button>
+    </div>
+
+
+    <p id="terk_t_body"></p>
+
+</div>
+
+
+@section scripts{
+    <script>
+        $(function () {
+
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+            });
+
+
+            //Initialize Select2 Elements
+            $('.select2').select2()
+
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
+
+            //Datemask dd/mm/yyyy
+            $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+            //Datemask2 mm/dd/yyyy
+            $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+            //Money Euro
+            $('[data-mask]').inputmask()
+
+            //Date picker
+            $('#reservationdate').datetimepicker({
+                format: 'L'
+            });
+
+            //Date and time picker
+            $('#reservationdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+
+            //Date range picker
+            $('#reservation').daterangepicker()
+            //Date range picker with time picker
+            $('#reservationtime').daterangepicker({
+                timePicker: true,
+                timePickerIncrement: 30,
+                locale: {
+                    format: 'MM/DD/YYYY hh:mm A'
+                }
+            })
+            //Date range as a button
+            $('#daterange-btn').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    startDate: moment().subtract(29, 'days'),
+                    endDate: moment()
+                },
+                function (start, end) {
+                    $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+                }
+            )
+
+            //Timepicker
+            $('#timepicker').datetimepicker({
+                format: 'LT'
+            })
+
+            //Bootstrap Duallistbox
+            $('.duallistbox').bootstrapDualListbox()
+
+            //Colorpicker
+            $('.my-colorpicker1').colorpicker()
+            //color picker with addon
+            $('.my-colorpicker2').colorpicker()
+
+            $('.my-colorpicker2').on('colorpickerChange', function (event) {
+                $('.my-colorpicker2 .fa-square').css('color', event.color.toString());
+            })
+
+            $("input[data-bootstrap-switch]").each(function () {
+                $(this).bootstrapSwitch('state', $(this).prop('checked'));
+            })
+
+        })
+        // BS-Stepper Init
+        document.addEventListener('DOMContentLoaded', function () {
+            window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+        })
+
+        // DropzoneJS Demo Code Start
+        Dropzone.autoDiscover = false
+
+        // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
+        var previewNode = document.querySelector("#template")
+        previewNode.id = ""
+        var previewTemplate = previewNode.parentNode.innerHTML
+        previewNode.parentNode.removeChild(previewNode)
+
+        var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+            url: "/target-url", // Set the url
+            thumbnailWidth: 80,
+            thumbnailHeight: 80,
+            parallelUploads: 20,
+            previewTemplate: previewTemplate,
+            autoQueue: false, // Make sure the files aren't queued until manually added
+            previewsContainer: "#previews", // Define the container to display the previews
+            clickable: ".fileinput-button" // Define the element that should be used as click trigger to select files.
+        })
+
+        myDropzone.on("addedfile", function (file) {
+            // Hookup the start button
+            file.previewElement.querySelector(".start").onclick = function () { myDropzone.enqueueFile(file) }
+        })
+
+        // Update the total progress bar
+        myDropzone.on("totaluploadprogress", function (progress) {
+            document.querySelector("#total-progress .progress-bar").style.width = progress + "%"
+        })
+
+        myDropzone.on("sending", function (file) {
+            // Show the total progress bar when upload starts
+            document.querySelector("#total-progress").style.opacity = "1"
+            // And disable the start button
+            file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
+        })
+
+        // Hide the total progress bar when nothing's uploading anymore
+        myDropzone.on("queuecomplete", function (progress) {
+            document.querySelector("#total-progress").style.opacity = "0"
+        })
+
+        // Setup the buttons for all transfers
+        // The "add files" button doesn't need to be setup because the config
+        // `clickable` has already been specified.
+        document.querySelector("#actions .start").onclick = function () {
+            myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED))
+        }
+        document.querySelector("#actions .cancel").onclick = function () {
+            myDropzone.removeAllFiles(true)
+        }
+        function insert_data() {
+            let customer_terk = document.querySelectorAll(".customer_terk");
+            let command = "";
+            let form_check_input = document.querySelectorAll(".form-check-input");
+            let _agent_id = document.getElementById("agent_loop_id").value;
+                 console.log(customer_terk.length);
+                console.log(form_check_input.length);
+            var text = "";
+            for (i = 0; i < customer_terk.length; i++) {
+                if (form_check_input[i].checked == true) {
+                    text += "," + customer_terk[i].innerHTML;
+                }
+            }
+            command = text.substring(1);
+            console.log(command);
+            $.ajax({
+                type: 'GET',
+                url: "/second?handler=UpdateAll",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+
+                    agen_id: _agent_id,
+                    list: command
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    alert("บันถึกข้อมูลสำเร็จ");
+
+                }
+            });
+            
+        }
+
+
+
+
+
+        function fond_data() {
+
+            let call_num = document.getElementById("call_num").value;
+
+
+            $.ajax({
+                type: 'GET',
+                url: "/second?handler=SecondData",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    call: call_num,
+
+
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+
+
+                    mainObj = JSON.parse(datas);
+                    let terk_t_body = document.getElementById("terk_t_body");
+                    var table = "";
+                    //   table += "<div>";
+                    table += '<table class= "table table-bordered table-hover">';
+                    table += '<thead>';
+                    table += '<tr>';
+                    table += '<th>ลำดับ</th>';
+                    table += '<th>วันที่</th>';
+                    table += '<th>ชื่อ-นามสกุลผู้ติดต่อ</th>';
+                    table += '<th>เบอร์โทร</th>';
+                    table += '<th>Email</th>';
+                    table += '<th>การติดต่อ/ครั้ง</th>';
+                    table += '<th>Case</th>';
+                    table += '<th>สถานะ</th>';
+                    table += '<th>เลือก</th>';
+                    table += '</tr>';
+                    table += '</thead>';
+                    table += '<tbody>';
+                    var ii = 1;
+                    for (i = 0; i < mainObj.length; i++) {
+
+
+                        table += "<tr>";
+                        table += "<td>" + (ii++) + "</td>";
+                        table += "<td>" + mainObj[i].date + "</td>";
+                        table += "<td class = 'customer_name' >" + mainObj[i].mom_name + " " + mainObj[i].mom_lname + "</td>";
+                        table += "<td class = 'customer_phone' >" + mainObj[i].phone + "</td>";
+                        table += "<td>" + mainObj[i].email + "</td>";
+
+
+                        table += "<td class = 'numberOfRepeat' >" + mainObj[i].numberOfRepeat + "</td>";
+                        table += "<td class = 'status' >" + mainObj[i].status + "</td>";
+                        table += "<td class = 'statusOfCase' >" + mainObj[i].statusOfCase + "</td>";
+                        table += '<td><div class="form-check"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"><label class="form-check-label" for="flexCheckDefault">เลือก</label ></div></td>';
+                        table += "<td class = 'agent_id' hidden>" + mainObj[i].agent_id + "</td>";
+                        table += "<td class = 'customer_terk' hidden>" + mainObj[i].custommerID + "</td>";
+                       
+
+
+
+
+                        table += "</tr>";
+
+                        ii++;
+                    }
+                    table += "</tbody></table>";
+                    //  table += "</div>";
+                    terk_t_body.innerHTML = table;
+                    let sl_agent = document.getElementById("sl_tt");
+                    sl_agent.style.display = "block";
+                }
+            });
+        }
+    </script>
+}
