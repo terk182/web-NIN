@@ -18,5 +18,6 @@ namespace web_NIN.Models
              public string numberOfRepeat { get; set; }
              public string custommerID { get; set; }
              public string agent_id { get; set; }
+             public string st_id { get; set; }
     }
 }

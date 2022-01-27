@@ -2707,7 +2707,7 @@
 
             let save_st = document.getElementById("save_st");
 
-
+            let agent = document.getElementById("agent");
             let st = document.getElementById("save_st").innerHTML;
 
 
@@ -2892,8 +2892,8 @@
                 }
                 else {
 
-                    if (save_st.innerHTML == "true") {
-                        save_st.innerHTML = "false";
+                   
+                       
                         $.ajax({
                             type: 'GET',
                             url: "/Outbound?handler=Update",
@@ -2921,15 +2921,14 @@
                                     html: "<h3 style='color:#FFFFF0'>บันทึกสำเร็จ</h3>",
                                     background: '#85C1E9',
                                     showConfirmButton: false,
-                                    timer: 2000,
+                                    timer: 1000,
                                     allowOutsideClick: false
                                 });
 
-                                setTimeout(function () {
+                          
                                     bt_toggle = true;
-                                    window.location.href = "Main";
-                                }, 1500);
-
+                                    window.location.href = "Main?agent=" + agent.innerHTML;
+                         
 
 
 
@@ -2941,7 +2940,7 @@
                             }
 
                         });
-                    }
+                    
 
 
                 }
