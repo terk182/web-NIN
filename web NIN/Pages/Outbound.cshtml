@@ -238,7 +238,7 @@
                     </label>
                 </div>
                 <select class="custom-select form-control-borde tk_inputr" id="twin" onchange="twin()" style="display: none;">
-                    <option value="0">--เลือ--</option>
+                    <option value="0">--เลือก--</option>
                     <option value="1">2</option>
                     <option value="2">3</option>
                     <option value="3">4</option>
@@ -1262,6 +1262,41 @@
         //  console.log(bond_age);
         //  let datt = age_cal_t(bond_age);
         console.log(datt);
+
+        function postdata() {
+            //change Age type to int
+            var person = { "FirstName": "Andrew", "LastName": "Lock", "Age": 31 };
+
+            var formData = new FormData();
+            formData.append("FirstName", "Andrew");
+            formData.append("LastName", "Lock");
+            formData.append("Age", 31);
+
+
+            var model = {
+                FirstName: "Shyju",
+                LastName: "Detroit",
+                Age: 31
+            };
+
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Outbound?handler=Abc",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(model),
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+            })
+                .done(function (result) {
+                    console.log(result);
+                });
+        }
+    
         function mom_select() {
 
             //-----------action-----------------------------
@@ -1558,8 +1593,10 @@
 
             const myArray = age_time.split("/");
 
-
-            result_st_babyage.innerHTML = myArray[2] + "-" + myArray[0] + "-" + myArray[1];
+            var date_t = "";
+                result_st_babyage.innerHTML = myArray[2] + "-" + myArray[0] + "-" + myArray[1];
+            date_t = myArray[2] + "/" + myArray[0] + "/" + myArray[1];
+           // console.log(date_t);
             var d11 = myArray[1];
             var m11 = myArray[0];
             var y11 = myArray[2].substring(0, 4);
@@ -1570,7 +1607,7 @@
             var d22 = date.getDate();
             var m22 = 1 + date.getMonth();
             var y22 = date.getFullYear();
-            var month_t = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+            var month_t = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
             if (d11 > d22) {
                 d22 = d22 + month_t[m22 - 1];
                 m22 = m22 - 1;
@@ -1582,8 +1619,43 @@
             var dddd = d22 - d11;
             var mmmm = m22 - m11;
             var yyyyyyyy = y22 - y11;
-            result_age.value = 'น้องอายุ ' + yyyyyyyy + ' ปี ' + Math.abs(mmmm) + ' เดือน ' + dddd + ' วัน';
-            result_total_babyage.innerHTML = yyyyyyyy + ' ปี ' + Math.abs(mmmm) + ' เดือน ' + dddd + ' วัน';
+
+
+
+
+
+            //result_age.value = 'น้องอายุ ' + yyyyyyyy + ' ปี ' + Math.abs(mmmm) + ' เดือน ' + dddd + ' วัน';
+            //result_total_babyage.innerHTML = yyyyyyyy + ' ปี ' + Math.abs(mmmm) + ' เดือน ' + dddd + ' วัน';
+
+            //-----------------------call c# -----------------------------------------
+           
+            $.ajax({
+             
+                type: 'GET',
+                url: "/Outbound?handler=Babyage",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    Date: date_t,
+                  
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("XSRF-TOKEN",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function (datas) {
+                    alert(datas);
+                 
+                    result_age.value = datas;
+                    result_total_babyage.innerHTML = datas;
+                }
+            });
+
+
+
+
+
+//----------------------------------------------------------------------------
         }
 
         function age_cal_a1() {
@@ -2036,6 +2108,7 @@
         }
         function insert_log(status, action, mom_id, next) {
             let replace = document.getElementById("replace").innerHTML;
+            let agent = document.getElementById("agent");
             $.ajax({
                 type: 'GET',
                 url: "/Outbound?handler=Insertlog",
@@ -2054,7 +2127,8 @@
                 },
                 success: function (datas) {
                     alert("บันทึกข้อมูลสำเร็จ")
-                    window.location.href = "Main";
+                    window.location.href = "Main?agent=" + agent.innerHTML;
+
                 }
             });
         }
@@ -2397,6 +2471,8 @@
                     old_txt += "," + header + "='" + old_value + "'";
                 }
             }
+
+
             command = command.substring(1);
             command_old = old_txt.substring(1);
             command += ",update_status = 'yes'";
@@ -2461,7 +2537,7 @@
             const today = new Date(timeElapsed);
             let time = today.toISOString(); // "2020-06-13T18:30:00.000Z"
             const myArray1 = time.split("T");
-
+            let agent = document.getElementById("agent");
             let no_information = document.getElementById("no_information").innerHTML;
             let no_information_add = document.getElementById("no_information_add").innerHTML;
             let cancel_subscription = document.getElementById("cancel_subscription").innerHTML;
@@ -2487,28 +2563,65 @@
 
 
             // alert(myArray1[1]);
+            var mom_model = {
+                'update_date': myArray1[0],
+                'update_time': myArray1[1],
+                'remark': no_information,
+                'status': st_text,
+                'statusOfCase': 'Reachable',
+                'detail': no_information_add,
+                'reason': cancel_subscription,
+                'numberOfRepeat': (replace_no + 1),
+                'custommerID': mom_id
+            };
+           // let sql = "UPDATE nin_assign SET update_date = '" + myArray1[0] + "',update_time = '" + myArray1[1] + "',remark = '" + no_information + "' ,status = '" + st_text + "',statusOfCase = 'Reachable',detail = '" + no_information_add + "',reason = '" + cancel_subscription + "',numberOfRepeat = '" + (replace_no + 1) + "' where custommerID =" + mom_id;
+           // let sql_2 = "UPDATE tbNIN_CRM_Outbound SET data_subscriptions_THnestlegrp_Oonestle_email = '0' where tbCRM_id =" + mom_id;
+            //$.ajax({
+            //    type: 'GET',
+            //    url: "/Outbound?handler=Updatemom",
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    data: {
+            //        command: sql,
+            //        command2: sql_2,
 
-            let sql = "UPDATE nin_assign SET update_date = '" + myArray1[0] + "',update_time = '" + myArray1[1] + "',remark = '" + no_information + "' ,status = '" + st_text + "',statusOfCase = 'Reachable',detail = '" + no_information_add + "',reason = '" + cancel_subscription + "',numberOfRepeat = '" + (replace_no + 1) + "' where custommerID =" + mom_id;
-            let sql_2 = "UPDATE tbNIN_CRM_Outbound SET data_subscriptions_THnestlegrp_Oonestle_email = '0' where tbCRM_id =" + mom_id;
+            //    },
+            //    beforeSend: function (xhr) {
+            //        xhr.setRequestHeader("XSRF-TOKEN",
+            //            $('input:hidden[name="__RequestVerificationToken"]').val());
+            //    },
+            //    success: function (datas) {
+            //        alert("บันถึกข้อมูลสำเร็จ")
+            //        window.location.href = "Main";
+            //    }
+            //});
+
             $.ajax({
-                type: 'GET',
-                url: "/Outbound?handler=Updatemom",
+                type: "POST",
+                url: "/Outbound?handler=UpdateCH",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data: {
-                    command: sql,
-                    command2: sql_2,
+                data: JSON.stringify(mom_model),
+                headers: {
+                    RequestVerificationToken:
+                        $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+            })
+                .done(function (result) {
+                    console.log(result);
+                    Swal.fire({
+                        icon: 'success',
+                        html: "<h3 style='color:#FFFFF0'>บันทึกสำเร็จ</h3>",
+                        background: '#85C1E9',
+                        showConfirmButton: false,
+                        timer: 1000,
+                        allowOutsideClick: false
+                    });
 
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("XSRF-TOKEN",
-                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                },
-                success: function (datas) {
-                    alert("บันถึกข้อมูลสำเร็จ")
-                    window.location.href = "Main";
-                }
-            });
+
+                    bt_toggle = true;
+                    window.location.href = "Main?agent=" + agent.innerHTML;
+                });
         }
         function save_esult() {
 
@@ -2667,7 +2780,15 @@
 
 
         }
+        function remove_linebreaks_ss(str) {
+            var newstr = "";
 
+            for (var i = 0; i < str.length; i++)
+                if (!(str[i] == '\n' || str[i] == '\r'))
+                    newstr += str[i];
+
+            return newstr;
+        }
 
 
 
@@ -2678,18 +2799,18 @@
             //----------------------------
             let text_annotation = document.getElementById("text_annotation").value;
             let result_annotation = document.getElementById("result_annotation");
-            result_annotation.innerHTML = text_annotation;
+            result_annotation.innerHTML = remove_linebreaks_ss(text_annotation);
             //---------1----------------------
 
             let text_annotation1 = document.getElementById("text_annotation1").value;
             let result_annotation1 = document.getElementById("result_annotation1");
-            result_annotation1.innerHTML = text_annotation1;
+            result_annotation1.innerHTML = remove_linebreaks_ss(text_annotation1);
 
 
             //---------2-------------------
             let text_annotation2 = document.getElementById("text_annotation2").value;
             let result_annotation2 = document.getElementById("result_annotation2");
-            result_annotation2.innerHTML = text_annotation2;
+            result_annotation2.innerHTML = remove_linebreaks_ss(text_annotation2);
 
 
 
@@ -2697,7 +2818,7 @@
 
             let text_annotation3 = document.getElementById("text_annotation3").value;
             let result_annotation3 = document.getElementById("result_annotation3");
-            result_annotation3.innerHTML = text_annotation3;
+            result_annotation3.innerHTML = remove_linebreaks_ss(text_annotation3);
 
             let result_gender_y = document.getElementById("status_gender").value;
 
@@ -2709,9 +2830,9 @@
 
             let agent = document.getElementById("agent");
             let st = document.getElementById("save_st").innerHTML;
+            let update_check = document.getElementById("flexCheckDefault_t").checked;
 
-
-            if (result_gender_y != "0" || as_num_t == "4") {
+            if (result_gender_y != "0" || as_num_t == "4" ) {
                 let result;
                 let header;
                 let command_h = "";
@@ -2835,7 +2956,8 @@
 
                 //-----------------update to base----------------------------
 
-                let baby_detail = ['result_gender',
+                let baby_detail = [
+                    'result_gender',
                     'result_babename',
                     'result_st_babyage',
                     'result_st_babyage',
@@ -2892,31 +3014,75 @@
                 }
                 else {
 
-                   
-                       
-                        $.ajax({
-                            type: 'GET',
-                            url: "/Outbound?handler=Update",
-                            contentType: "application/json; charset=utf-8",
-                            dataType: "json",
-                            data: {
-                                table: "nin_result_record",
-                                header: command_h,
-                                value: command_v,
-                                customer: cus_id,
-                                replace: replace,
-                                status: as_status,
-                                upd: command_update,
-                                std: st
-                            },
-                            beforeSend: function (xhr) {
-                                xhr.setRequestHeader("XSRF-TOKEN",
-                                    $('input:hidden[name="__RequestVerificationToken"]').val());
-                            },
-                            success: function (datas) {
-                                console.log(datas);
-                                //-----------------------------------------------
-                                Swal.fire({
+                    var model = {
+                        'create_operator_name': document.getElementById('result_agent').innerHTML,
+                        'status': document.getElementById('result_st_call').innerHTML,
+
+                        'customer_name': document.getElementById('result_cus_name').innerHTML,
+                        'customerID': document.getElementById('result_cus_id').innerHTML,
+
+                        'born_status': document.getElementById('result_st_bond').innerHTML,
+
+
+                        'result_bday_th_original': document.getElementById('result_old_bond').innerHTML,
+                        'birthDate_original': document.getElementById('result_bondday').innerHTML,
+                        'remark': document.getElementById('result_bond_age').innerHTML,
+                        
+                        'birthDate_new': document.getElementById('result_st_babyage').innerHTML,
+                        'result_bday_th_new': document.getElementById('result_total_babyage').innerHTML,
+                        'result_babyage': document.getElementById('result_babyage').innerHTML,
+                        'child_name': document.getElementById('result_babename').innerHTML,
+                        'milk_type': document.getElementById('result_milkuse').innerHTML,
+                        'milk_brand': document.getElementById('result_milk_brand').innerHTML,
+                        'health_problems': document.getElementById('result_health_problems').innerHTML,
+                        'worry': document.getElementById('result_worry').innerHTML,
+                        'result_new_bondday': document.getElementById('result_new_bondday').innerHTML,
+                        'other': document.getElementById('result_other').innerHTML,
+                        'result_annotation': document.getElementById('result_annotation').innerHTML,
+                        'gender': document.getElementById('result_gender').innerHTML,
+                        'twin_status': document.getElementById('result_twin').innerHTML,
+                        'twin_number': document.getElementById('result_num').innerHTML,
+                        'result_annotation_1': document.getElementById('result_annotation1').innerHTML,
+                        'result_annotation_2': document.getElementById('result_annotation2').innerHTML,
+                        'result_annotation_3': document.getElementById('result_annotation3').innerHTML,
+                        'child_name_1': document.getElementById('result_babename_a1').innerHTML,
+                        'birthDate_1': document.getElementById('result_st_babyage_a1').innerHTML,
+                        'result_bday_th_1': document.getElementById('result_total_babyage_a1').innerHTML,
+                        'child_gender_1': document.getElementById('result_gender_a1').innerHTML,
+                        'child_name_2': document.getElementById('result_babename_a2').innerHTML,
+                        'birthDate_2': document.getElementById('result_st_babyage_a2').innerHTML,
+                        'result_bday_th_2': document.getElementById('result_total_babyage_a2').innerHTML,
+                        'child_gender_2': document.getElementById('result_gender_a2').innerHTML,
+                        'child_name_3': document.getElementById('result_babename_a3').innerHTML,
+                        'birthDate_3': document.getElementById('result_st_babyage_a3').innerHTML,
+                        'result_bday_th_3': document.getElementById('result_total_babyage_a3').innerHTML,
+                        'child_gender_3': document.getElementById('result_gender_a3').innerHTML,
+                        'child_name_4': document.getElementById('result_babename_a4').innerHTML,
+                        'birthDate_4': document.getElementById('result_st_babyage_a4').innerHTML,
+                        'result_bday_th_4': document.getElementById('result_total_babyage_a4').innerHTML,
+                        'child_gender_4': document.getElementById('result_gender_a4').innerHTML,
+                        'customer_id': cus_id,
+                        'replace': replace,
+                        'status_t': as_status,
+                        
+                    };
+
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Outbound?handler=Abc",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        data: JSON.stringify(model),
+                        headers: {
+                            RequestVerificationToken:
+                                $('input:hidden[name="__RequestVerificationToken"]').val()
+                        },
+                    })
+                        .done(function (result) {
+                            console.log(result);
+                            Swal.fire({
                                     icon: 'success',
                                     html: "<h3 style='color:#FFFFF0'>บันทึกสำเร็จ</h3>",
                                     background: '#85C1E9',
@@ -2925,28 +3091,70 @@
                                     allowOutsideClick: false
                                 });
 
-                          
+
                                     bt_toggle = true;
-                                    window.location.href = "Main?agent=" + agent.innerHTML;
+                                   window.location.href = "Main?agent=" + agent.innerHTML;
+                        });
+                        //$.ajax({
+                        //    type: 'GET',
+                        //    url: "/Outbound?handler=Update",
+                        //    contentType: "application/json; charset=utf-8",
+                        //    dataType: "json",
+                        //    data: {
+                              
+                        //        header: command_h,
+                        //        value: command_v,
+                        //        customer: cus_id,
+                        //        replace: replace,
+                        //        status: as_status,
+                        //        upd: command_update,
+                               
+                        //    },
+                        //    beforeSend: function (xhr) {
+                        //        xhr.setRequestHeader("XSRF-TOKEN",
+                        //            $('input:hidden[name="__RequestVerificationToken"]').val());
+                        //    },
+                        //    success: function (datas) {
+                        //        console.log(datas);
+                        //        //-----------------------------------------------
+                        //        Swal.fire({
+                        //            icon: 'success',
+                        //            html: "<h3 style='color:#FFFFF0'>บันทึกสำเร็จ</h3>",
+                        //            background: '#85C1E9',
+                        //            showConfirmButton: false,
+                        //            timer: 1000,
+                        //            allowOutsideClick: false
+                        //        });
+
+                          
+                        //            bt_toggle = true;
+                        //            window.location.href = "Main?agent=" + agent.innerHTML;
                          
 
 
 
-                                //----------------------------terk--------------------------------
+                        //        //----------------------------terk--------------------------------
 
-                                // alert("บันทึกข้อมูลสำเร็จ")
+                        //        // alert("บันทึกข้อมูลสำเร็จ")
 
 
-                            }
+                        //    }
 
-                        });
+                        //});
                     
 
 
                 }
             }
             else {
-                alert("ระบุเพศน้องด้วยจิ");
+
+                if (update_check == true) {
+                    alert("แก้ไขข้อมูลสำเร็จ");
+                }
+                else {
+                    alert("ระบุเพศน้องด้วยจิ");
+                }
+               
             }
 
 

@@ -377,11 +377,13 @@
                     table += '<th>status</th>';
                     table += '<th>edit</th>';
                     table += '<th>for group change</th>';
+                    table += '<th>call status</th>';
                     table += '</tr>';
                     table += '</thead>';
                     table += '<tbody>';
                     var ii = 1;
                     var class_t = "";
+                    var class_tt = "";
                     for (i = 0; i < mainObj.length; i++) {
 
 
@@ -418,12 +420,20 @@
                             }
                            
                         }
-                        
+                        if (mainObj[i].detail == "frist call") {
+                            class_tt = "1";
+                        }
+                        else {
+                            class_tt = "2";
+                        }
                      
-                        table += '<td><button type="button" class="btn btn-secondary" onclick="edit_agent(' + mainObj[i].custommerID + ')" >edit</button></td>';
+                        table += '<td><button type="button" class="btn btn-secondary" onclick="edit_agent(' + mainObj[i].custommerID + ','+class_tt+')" >edit</button></td>';
+
+
                         table += "<td class = 'agent_id' hidden>" + mainObj[i].agent_id + "</td>";
                         table += "<td class = 'customer_terk' hidden>" + mainObj[i].custommerID + "</td>";
                         table += '<td><div class="form-check"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"><label class="form-check-label" for="flexCheckDefault">เลือก</label ></div></td>';
+                        table += "<td class = 'datail' >" + mainObj[i].detail + "</td>";
                         table += "</tr>";
 
                         ii++;
@@ -546,7 +556,7 @@
             let agent_loop_text = document.getElementById("agent_loop_id");
             let terk = agent_loop_text.options[agent_loop_text.selectedIndex].text;
             let sql_date = document.getElementById("sql_date").innerHTML;
-            alert("loop : " + count_loop + "  agent id : " + agent_loop_id + " agent name :" + terk + " date : " + sql_date);
+           // alert("loop : " + count_loop + "  agent id : " + agent_loop_id + " agent name :" + terk + " date : " + sql_date);
 
 
             // console.log(myJSON);
@@ -604,19 +614,22 @@
            // alert("ttttttttttttttttttttttt");
         }
         var idd;
+        var call_st;
         var idd_t;
-        function edit_agent(id) {
+        function edit_agent(id, detali) {
+            
             $('#myModal').modal('show');
-           // alert(id);
+           // alert(detali);
             let mom_id = document.getElementById("mom_id");
             idd = id;
+            call_st = detali;
         }
         function select_new_ggent() {
             
         }
         function Save_one() {
             let agent_loop_ = document.getElementById("agent_name_ch").value;
-           // alert("mom: " + idd + "agent: " + agent_loop_);
+            alert("mom: " + idd + "agent: " + agent_loop_ + "st" + call_st);
             $.ajax({
                 type: 'GET',
                 url: "/edit?handler=UpdateAssign",
@@ -624,7 +637,8 @@
                 dataType: "json",
                 data: {
                     mom_id: idd,
-                    agen_id: agent_loop_
+                    agen_id: agent_loop_,
+                    ststus: call_st
 
                 },
                 beforeSend: function (xhr) {
@@ -632,7 +646,7 @@
                         $('input:hidden[name="__RequestVerificationToken"]').val());
                 },
                 success: function (datas) {
-                    alert(datas);
+                    alert("บันทึกข้อมูลสำเร็จ");
 
                 }
             });

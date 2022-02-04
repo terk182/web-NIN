@@ -66,8 +66,7 @@
                         int num = Int16.Parse(@std.replace);
                         num = num + 1;
 
-
-
+                
                         var str_l = std.status;
                         // (status.ToLower() != "complete")
                         var txt_name = std.name + " " + std.lname;
@@ -116,8 +115,29 @@
                                                 }
                                                 else
                                                 {
-                                                    txt = "เป็นการโทรครั้งที่สอง";
+
+                                                    txt = "เป็นการโทรครั้งที่" + @std.catagory;
+
                                                     bt_class = "btn btn-warning";
+
+                                                    switch (@std.catagory)
+                                                    {
+                                                        case "1":
+                                                            bt_class = "btn btn-primary";
+                                                            break;
+                                                        case "2":
+                                                            bt_class = "btn btn-warning";
+                                                            break;
+                                                        case "3":
+                                                            bt_class = "btn btn-danger";
+                                                            break;
+                                                        case "4":
+                                                            bt_class = "btn btn-default";
+                                                            break;
+                                                        default:
+                                                            bt_class = "btn btn-primary";
+                                                            break;
+                                                    }
                                                 }
 
                                             }

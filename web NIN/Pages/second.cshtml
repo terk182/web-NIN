@@ -15,7 +15,7 @@
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
-            <option value="3">4</option>
+
 
         </select>
         <br />
@@ -34,6 +34,9 @@
             }
 
         </select>
+        <br />
+        <br />
+        <input id="asign_num" type="number" class="form-control" placeholder="ใส่จำนวน">
         <br />
         <br />
         <button type="button" class="btn btn-secondary" onclick="insert_data()">assing</button>
@@ -197,41 +200,86 @@
             myDropzone.removeAllFiles(true)
         }
         function insert_data() {
-            let customer_terk = document.querySelectorAll(".customer_terk");
+
+         
+            let call_num = document.getElementById("call_num").value;
+            let customer_terk = document.querySelectorAll(".customer_terk"); 
+            let agent_terk = document.querySelectorAll(".agent_terk");
             let command = "";
             let form_check_input = document.querySelectorAll(".form-check-input");
             let _agent_id = document.getElementById("agent_loop_id").value;
+            let _agent_name = document.getElementById("agent_loop_id")
+            let name_t = _agent_name.options[_agent_name.selectedIndex].text;
+            //alert(name_t);
+
+
+
                  console.log(customer_terk.length);
-                console.log(form_check_input.length);
-            var text = "";
-            for (i = 0; i < customer_terk.length; i++) {
-                if (form_check_input[i].checked == true) {
-                    text += "," + customer_terk[i].innerHTML;
+            console.log(form_check_input.length);
+            let asign_num = document.getElementById("asign_num").value;
+            if (_agent_id != "select") {
+
+
+
+                var text = "";
+                let _asign_num = parseInt(asign_num);
+
+                if (asign_num > 0) {
+                    let count_t = 0;
+                    for (i = 0; i < customer_terk.length; i++) {
+                        if (form_check_input[i].checked == false) {
+                            text += "," + customer_terk[i].innerHTML;
+                            form_check_input[i].checked = true;
+                            agent_terk[i].innerHTML = name_t;
+                            count_t++;
+                        }
+                        if (count_t >= _asign_num ) {
+                            break;
+                        }
+                       
+                      
+                    }
                 }
+                else {
+                    for (i = 0; i < customer_terk.length; i++) {
+                        if (form_check_input[i].checked == true) {
+                            text += "," + customer_terk[i].innerHTML;
+                            agent_terk[i].innerHTML = name_t;
+                        }
+                    }
+                }
+             
+                command = text.substring(1);
+                console.log(command);
+                $.ajax({
+                    type: 'GET',
+                    url: "/second?handler=Assign",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {
+
+                        agen_id: _agent_id,
+                        list: command,
+                        num: call_num
+
+                    },
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("XSRF-TOKEN",
+                            $('input:hidden[name="__RequestVerificationToken"]').val());
+                    },
+                    success: function (datas) {
+                        alert("บันถึกข้อมูลสำเร็จ");
+                       // location.reload();
+
+                    }
+                });
+
+
             }
-            command = text.substring(1);
-            console.log(command);
-            $.ajax({
-                type: 'GET',
-                url: "/second?handler=UpdateAll",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                data: {
-
-                    agen_id: _agent_id,
-                    list: command
-
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("XSRF-TOKEN",
-                        $('input:hidden[name="__RequestVerificationToken"]').val());
-                },
-                success: function (datas) {
-                    alert("บันถึกข้อมูลสำเร็จ");
-                    location.reload();
-
-                }
-            });
+            else {
+                alert("กรุณาเลือก Agint");
+            }
+  
             
         }
 
@@ -277,6 +325,7 @@
                     table += '<th>Case</th>';
                     table += '<th>สถานะ</th>';
                     table += '<th>เลือก</th>';
+                    table += '<th>agent</th>';
                     table += '</tr>';
                     table += '</thead>';
                     table += '<tbody>';
@@ -298,6 +347,7 @@
                         table += '<td><div class="form-check"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"><label class="form-check-label" for="flexCheckDefault">เลือก</label ></div></td>';
                         table += "<td class = 'agent_id' hidden>" + mainObj[i].agent_id + "</td>";
                         table += "<td class = 'customer_terk' hidden>" + mainObj[i].custommerID + "</td>";
+                        table += "<td class = 'agent_terk' ></td>";
                        
 
 
@@ -305,7 +355,7 @@
 
                         table += "</tr>";
 
-                        ii++;
+                    
                     }
                     table += "</tbody></table>";
                     //  table += "</div>";

@@ -12,5 +12,6 @@ namespace web_NIN.Models
         public string custommerID { get; set; }
         public string custommer_name { get; set; }
         public string phone { get; set; }
+        public string replece { get; set; }
     }
 }

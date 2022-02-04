@@ -26,5 +26,6 @@ namespace web_NIN.Models
         public string agent_id { get; set; }
         public string detail { get; set; }
         public string catagory { get; set; }
+     
     }
 }

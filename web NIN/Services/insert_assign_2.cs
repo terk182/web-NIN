@@ -20,7 +20,7 @@ namespace web_NIN.Services
                 SqlCommand command;
 
 
-                sql = "insert into dbo.nin_assign_second ( create_operator_name, operatorID,custommerID,customer_name,phone,status ) values ";
+                sql = "insert into dbo.nin_assign_second ( create_operator_name, operatorID,custommerID,customer_name,phone,reason,status ) values ";
                 
 
                 var sql_value = "";
@@ -33,6 +33,7 @@ namespace web_NIN.Services
                     sql_value += "'" + data_model[i].custommerID + "',";
                     sql_value += "'" + data_model[i].custommer_name + "',";
                     sql_value += "'" + data_model[i].phone + "',";
+                    sql_value += "'" + data_model[i].replece + "',";
                     sql_value += "'" + ststus + "')";
                    
 

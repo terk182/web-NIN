@@ -82,11 +82,19 @@ namespace web_NIN.Pages
 
             var list_customer2 = terk2.get_customer(agent_id.id.ToString());
 
-
+            string numm = "";
             foreach (var value in list_customer2)
             {
-                
-                    customer_list_check.Add(new customer
+                if (String.IsNullOrEmpty(value.catagory)) 
+                {
+                    numm = "2";
+                }
+                else
+                {
+                    numm = (Int32.Parse(value.catagory) + 1).ToString();
+                   
+                }
+                customer_list_check.Add(new customer
                     {
                         no = no++,
                         date = value.date,
@@ -100,8 +108,8 @@ namespace web_NIN.Pages
                         detail = value.detail,
                         status = "pending",
                         customer_id = value.customer_id,
-                        catagory = "1"
-                    });
+                        catagory = numm
+                });
                
             }
 

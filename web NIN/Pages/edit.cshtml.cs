@@ -68,8 +68,11 @@ namespace web_NIN.Pages
         public IActionResult OnGetCheck_assign(string command, string min_u, string max_u) //Assign
         {
             var _get_assign = new get_assign();
+            var _get_assign2 = new get_assign2();
             var _between_assign_id = new between_assign_id();
             var _result = new List<assign_model>();
+            var _result2 = new List<assign_model>();
+            var total_result = new List<assign_model>();
             if (command == "all")
             {
                 _result = _get_assign.get_all();
@@ -85,23 +88,83 @@ namespace web_NIN.Pages
             else
             {
                 _result = _get_assign.get_name(min_u);
+                foreach(var asent_detail in _result)
+                {
+                    total_result.Add(new assign_model {
+
+                        date = asent_detail.date,
+                        mom_name = asent_detail.mom_name,
+                        mom_lname = asent_detail.mom_lname,
+                        phone = asent_detail.phone,
+                        email = asent_detail.email,
+                        agent_id = asent_detail.agent_id,
+                        status = asent_detail.status,
+                        statusOfCase = asent_detail.statusOfCase,
+                        custommerID = asent_detail.custommerID,
+                        numberOfRepeat = asent_detail.numberOfRepeat,
+                        detail = "frist call"
+
+
+                    });
+
+
+                        
+                }
+
+                _result2 = _get_assign2.get_name(min_u);
+                foreach (var asent_detail in _result2)
+                {
+                    total_result.Add(new assign_model
+                    {
+
+                        date = asent_detail.date,
+                        mom_name = asent_detail.mom_name,
+                        mom_lname = asent_detail.mom_lname,
+                        phone = asent_detail.phone,
+                        email = asent_detail.email,
+                        agent_id = asent_detail.agent_id,
+                        status = asent_detail.status,
+                        statusOfCase = asent_detail.statusOfCase,
+                        custommerID = asent_detail.custommerID,
+                        numberOfRepeat = asent_detail.numberOfRepeat,
+                        detail = "second call"
+
+
+                    });
+
+
+
+                }
             }
 
             //get_assign
             
           
-            var json1 = JsonSerializer.Serialize(_result);
+            var json1 = JsonSerializer.Serialize(total_result);
             return new JsonResult(json1);
         }
 
         [HttpGet]
-        public IActionResult OnGetUpdateAssign(string mom_id, string agen_id) //Assign
+        public IActionResult OnGetUpdateAssign(string mom_id, string agen_id,string ststus) //Assign
         {
             var usser = HttpContext.Session.GetString("username");
-            var _update_custmor_new_agent = new update_custmor_new_agent();
-            _update_custmor_new_agent.set_value(agen_id, mom_id);
-            var _update_to_new_assign = new update_to_new_assign();
-            _update_to_new_assign.set_value(agen_id, mom_id, usser);
+            if (ststus == "1")
+            {
+              
+                var _update_custmor_new_agent = new update_custmor_new_agent();
+                _update_custmor_new_agent.set_value(agen_id, mom_id);
+
+
+
+                var _update_to_new_assign = new update_to_new_assign();
+                _update_to_new_assign.set_value(agen_id, mom_id, usser);
+            }
+            else
+            {
+                var _update_to_new_assign2 = new update_to_new_assign2();
+                _update_to_new_assign2.set_value(agen_id, mom_id, usser);
+            }
+            
             return new JsonResult(mom_id);
         }
 

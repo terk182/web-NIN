@@ -26,7 +26,8 @@ namespace web_NIN.Services
                 var sql_value = "";
                 for (int i = 0; i < data_model.Count; i++)
                 {
-                    //sql_value += ",('"+DateTime.Now.ToString("yyyy-MM-dd")+"',";
+                    //sql_value += ",('" + DateTime.Now.ToString("yyyy-MM-dd") + "',";
+                    sql_value += ",(";
                     //sql_value += "'" + DateTime.Now.ToString("HH:mm:ss") + "',";
                     sql_value += "'" + data_model[i].create_operator_name + "',";
                     sql_value += "'" + data_model[i].operatorID + "',";

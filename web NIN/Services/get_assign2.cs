@@ -7,7 +7,7 @@ using web_NIN.Models;
 
 namespace web_NIN.Services
 {
-    public class get_assign
+    public class get_assign2
     {
         public List<assign_model> get_name(string name)
         {
@@ -22,7 +22,7 @@ namespace web_NIN.Services
                 SqlCommand command;
                 SqlDataReader dataReader;
 
-                sql = "SELECT t1.create_date,t2.profile_firstName,t2.profile_lastName,t2.profile_mobile,t2.profile_email,t1.operatorID,t2.status as status_mom,t2.update_status,t1.numberOfRepeat,t1.status AS status_m_agent,t1.statusOfCase,t2.tbCRM_id FROM nin_assign t1 LEFT JOIN tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID WHERE t1.operatorID = '" + name + "'";
+                sql = "SELECT t1.create_date,t2.profile_firstName,t2.profile_lastName,t2.profile_mobile,t2.profile_email,t1.operatorID,t2.status as status_mom,t2.update_status,t1.numberOfRepeat,t1.status AS status_m_agent,t1.statusOfCase,t2.tbCRM_id FROM nin_assign_second t1 LEFT JOIN tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID WHERE t1.operatorID = '" + name + "'";
                 command = new SqlCommand(sql, sqlconn);
                 dataReader = command.ExecuteReader();
 
@@ -114,7 +114,7 @@ namespace web_NIN.Services
                 SqlCommand command;
                 SqlDataReader dataReader;
 
-                sql = "SELECT t1.create_date, t2.profile_firstName, t2.profile_lastName, t2.profile_mobile, t2.profile_email, t1.operatorID, t2.status AS status_mom, t2.update_status, t1.numberOfRepeat, t1.status AS status_m_agent, t1.statusOfCase, t2.tbCRM_id FROM nin_assign AS t1 LEFT JOIN tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID WHERE(t1.status NOT IN('Complete', 'Wrong Number', 'Foreign customers', 'On Behalf of Owner')) AND(t1.status <> 'Miscarry') AND(numberOfRepeat = '"+call+"') AND t1.statusOfCase <> 'Reachable' ORDER BY t2.tbCRM_id";
+                sql = "SELECT t1.create_date,t2.profile_firstName,t2.profile_lastName,t2.profile_mobile,t2.profile_email,t1.operatorID,t2.status as status_mom,t2.update_status,t1.numberOfRepeat,t1.status AS status_m_agent,t1.statusOfCase,t2.tbCRM_id,t3.id AS s_id FROM nin_assign t1 LEFT JOIN tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID LEFT JOIN nin_assign_second t3 ON t3.custommerID = t1.custommerID where (t1.status != 'Complete' AND t1.status != 'Miscarry') AND t1.numberOfRepeat = '" + call + "' and t3.id IS NULL";
                 command = new SqlCommand(sql, sqlconn);
                 dataReader = command.ExecuteReader();
                 string st_check = "";
@@ -122,7 +122,7 @@ namespace web_NIN.Services
                 {
 
                     st_check = dataReader["status_m_agent"].ToString();
-                    if (st_check == "On Behalf of Owner"  || st_check == "Wrong Number" || st_check == "Foreign customers")
+                    if (st_check == "On Behalf of Owner" || st_check == "On Behalf of Owner" || st_check == "Wrong Number" || st_check == "Foreign customers")
                     {
                        
                     }
@@ -140,7 +140,7 @@ namespace web_NIN.Services
                             statusOfCase = dataReader["statusOfCase"].ToString(),
                             custommerID = dataReader["tbCRM_id"].ToString(),
                             numberOfRepeat = dataReader["numberOfRepeat"].ToString(),
-                           // st_id = dataReader["s_id"].ToString(),
+                            st_id = dataReader["s_id"].ToString(),
                             //id = Int32.Parse(dataReader["id"].ToString()),
                             //thai_status = dataReader["thai_status"].ToString(),
                             //eng_status = dataReader["eng_status"].ToString(),

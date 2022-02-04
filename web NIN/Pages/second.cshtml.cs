@@ -50,7 +50,7 @@ namespace web_NIN.Pages
 
 
         [HttpGet]
-        public IActionResult OnGetUpdateAll(string agen_id, string list) //Assign
+        public IActionResult OnGetAssign(string agen_id, string list,string num) //Assign
         {
             string[] mom_id_list = list.Split(',');
             var buck = new List<RequestObj>();
@@ -61,7 +61,8 @@ namespace web_NIN.Pages
                 {
                     custommerID = mom_id_list[i],
                     operatorID = agen_id,
-                    create_operator_name = usser
+                    create_operator_name = usser,
+                    replece = num
 
                 });
             }

@@ -34,7 +34,7 @@ namespace web_NIN.Services
 
             
 
-                sql = "SELECT t2.tbGigya_registerDate,t2.profile_firstName,t2.profile_lastName,t2.profile_mobile,t2.profile_email,t2.tbCRM_id from nin_assign_second t1 LEFT join tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID   WHERE t1.status != 'Complete' and  t1.operatorID ='" + agen_id + "'";
+                sql = "SELECT t2.tbGigya_registerDate,t2.profile_firstName,t2.profile_lastName,t2.profile_mobile,t2.profile_email,t2.tbCRM_id,t1.reason from nin_assign_second t1 LEFT join tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID   WHERE t1.status != 'Complete' and  t1.operatorID ='" + agen_id + "'";
                 command = new SqlCommand(sql, sqlconn);
                 dataReader = command.ExecuteReader();
                 int no = 1;
@@ -82,8 +82,8 @@ namespace web_NIN.Services
                             case_no = txt_r,
                             detail = txt_x,
                             status = txt_r,
-                            customer_id = dataReader["tbCRM_id"].ToString()
-
+                            customer_id = dataReader["tbCRM_id"].ToString(),
+                            catagory = dataReader["reason"].ToString()
                         });
                     }
 
@@ -105,8 +105,8 @@ namespace web_NIN.Services
                             case_no = value.case_no,
                             detail = value.detail,
                             status = value.status,
-                            customer_id = value.customer_id
-
+                            customer_id = value.customer_id,
+                            catagory = value.catagory
                         });
                     
                 }
