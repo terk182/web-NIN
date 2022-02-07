@@ -114,17 +114,17 @@ namespace web_NIN.Services
                 SqlCommand command;
                 SqlDataReader dataReader;
 
-                sql = "SELECT t1.create_date, t2.profile_firstName, t2.profile_lastName, t2.profile_mobile, t2.profile_email, t1.operatorID, t2.status AS status_mom, t2.update_status, t1.numberOfRepeat, t1.status AS status_m_agent, t1.statusOfCase, t2.tbCRM_id,t1.second FROM nin_assign AS t1 LEFT JOIN tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID WHERE(t1.status NOT IN('Complete', 'Wrong Number', 'Foreign customers', 'On Behalf of Owner')) AND(t1.status <> 'Miscarry') AND(numberOfRepeat = '" + call+ "') AND t1.statusOfCase <> 'Reachable' ORDER BY t2.tbCRM_id";
+                sql = "SELECT t1.create_date, t2.profile_firstName, t2.profile_lastName,t2.profile_mobile, t2.profile_email, t1.operatorID, t2.status AS status_mom, t2.update_status, t1.numberOfRepeat, t1.status AS status_m_agent,t1.statusOfCase, t2.tbCRM_id FROM nin_assign AS t1 LEFT JOIN tbNIN_CRM_Outbound t2 ON t2.tbCRM_id = t1.custommerID WHERE(t1.status NOT IN('Complete', 'Wrong Number', 'Foreign customers', 'On Behalf of Owner')) AND(t1.status <> 'Miscarry') AND (numberOfRepeat = '"+call+"') AND t1.statusOfCase = 'Unreachable' ORDER BY t2.tbCRM_id";
                 command = new SqlCommand(sql, sqlconn);
                 dataReader = command.ExecuteReader();
                 string st_check = "";
-                string check_circel = "";
+       
                 while (dataReader.Read())
                 {
 
                     st_check = dataReader["status_m_agent"].ToString();
-                    check_circel = dataReader["second"].ToString();
-                    if (st_check == "On Behalf of Owner"  || st_check == "Wrong Number" || st_check == "Foreign customers" || check_circel == call)
+
+                    if (st_check == "On Behalf of Owner"  || st_check == "Wrong Number" || st_check == "Foreign customers")
                     {
                        
                     }
