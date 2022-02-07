@@ -53,11 +53,14 @@ namespace web_NIN.Pages
             var dat_loop = date_check.Where((source, index) => index != 0).ToArray();
 
             var m_t = "";
+
+            var _get_year = new get_year();
+            var yyy_t = _get_year.get_value();
             for (int ih = 0; ih < dat_loop_m.Length; ih++)
             {
                 m_t = dat_loop_m[ih];
   
-                var yyyyy = "2021-" + dat_loop_m[ih];
+                var yyyyy = yyy_t[0].year +"-"+ dat_loop_m[ih];
 
                 var data = _calendar_service.get_value(yyyyy);
                if(data.Count() <1)
@@ -109,7 +112,7 @@ namespace web_NIN.Pages
                             count_ = count_date,
                             d = d_mane,
                             m = m_mane,
-                            y = "2021",
+                            y = yyy_t[0].year,
                             
 
                         }

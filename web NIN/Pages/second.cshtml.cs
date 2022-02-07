@@ -71,6 +71,9 @@ namespace web_NIN.Pages
             var _update_to_new_assign_all = new insert_assign_2();
             _update_to_new_assign_all.set_value(buck);
 
+            var _update_to_assign_Unreachable = new update_to_assign_Unreachable();
+            _update_to_assign_Unreachable.set_value(buck);
+
             return new JsonResult(agen_id);
         }
     }

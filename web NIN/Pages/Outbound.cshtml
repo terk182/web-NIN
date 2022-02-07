@@ -2561,8 +2561,6 @@
                     st_text = "";
             }
 
-
-            // alert(myArray1[1]);
             var mom_model = {
                 'update_date': myArray1[0],
                 'update_time': myArray1[1],
@@ -2574,27 +2572,7 @@
                 'numberOfRepeat': (replace_no + 1),
                 'custommerID': mom_id
             };
-           // let sql = "UPDATE nin_assign SET update_date = '" + myArray1[0] + "',update_time = '" + myArray1[1] + "',remark = '" + no_information + "' ,status = '" + st_text + "',statusOfCase = 'Reachable',detail = '" + no_information_add + "',reason = '" + cancel_subscription + "',numberOfRepeat = '" + (replace_no + 1) + "' where custommerID =" + mom_id;
-           // let sql_2 = "UPDATE tbNIN_CRM_Outbound SET data_subscriptions_THnestlegrp_Oonestle_email = '0' where tbCRM_id =" + mom_id;
-            //$.ajax({
-            //    type: 'GET',
-            //    url: "/Outbound?handler=Updatemom",
-            //    contentType: "application/json; charset=utf-8",
-            //    dataType: "json",
-            //    data: {
-            //        command: sql,
-            //        command2: sql_2,
 
-            //    },
-            //    beforeSend: function (xhr) {
-            //        xhr.setRequestHeader("XSRF-TOKEN",
-            //            $('input:hidden[name="__RequestVerificationToken"]').val());
-            //    },
-            //    success: function (datas) {
-            //        alert("บันถึกข้อมูลสำเร็จ")
-            //        window.location.href = "Main";
-            //    }
-            //});
 
             $.ajax({
                 type: "POST",
