@@ -10,7 +10,8 @@
     <p id="user" hidden>@ViewData["user"]</p>
     <p id="ppp" hidden>@ViewData["password"]</p>
     <p id="login" hidden>@ViewData["login"]</p>
-    <br />
+    <p id="ty" hidden>@ViewData["type"]</p>
+        <br />
 
 </div>
 <div class="card col-md-12">
@@ -150,7 +151,7 @@
                                         if (num > 0)
                                         {
                                             <td>
-                                                <a href="Outbound?id=@std.customer_id&tel=@std.phone&replace=@num&st=@std.catagory" class="@bt_class" role="button" aria-pressed="true">
+                                                <a href="Outbound?id=@std.customer_id&tel=@std.phone&replace=@num&st=@std.catagory&type=@ViewData["type"]" class="@bt_class" role="button" aria-pressed="true">
                                                     @txt <span class="badge badge-light">@std.replace</span>
                                                     <span class="sr-only">unread messages</span>
                                                 </a>

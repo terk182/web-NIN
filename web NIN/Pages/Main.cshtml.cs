@@ -13,11 +13,11 @@ namespace web_NIN.Pages
 {
     public class MainModel : PageModel
     {
-        public IActionResult OnGet(string agent)
+        public IActionResult OnGet(string agent ,string type)
         {
             var login_status = "";
             ViewData["terk"] = "terk";
-
+            ViewData["type"] = type;
 
             ViewData["user"] = HttpContext.Session.GetString("username");
 
@@ -48,10 +48,19 @@ namespace web_NIN.Pages
 
 
             var customer_list_check = new List<customer>();
-
+            var list_customer = new List<customer>();
             var terk = new service_customer();
 
-            var list_customer = terk.get_customer(agent_id.id.ToString());
+
+            if(type== "baby")
+            {
+                list_customer = terk.get_customer(agent_id.id.ToString(), type);
+            }
+            else
+            {
+                 list_customer = terk.get_customer(agent_id.id.ToString());
+            }
+            
 
             int no = 1;
             foreach (var value in list_customer)
@@ -80,9 +89,18 @@ namespace web_NIN.Pages
 
             var terk2 = new service_customer2();
 
-            var list_customer2 = terk2.get_customer(agent_id.id.ToString());
+            var list_customer2 = new List<customer>();
 
-            string numm = "";
+
+            if (type == "baby")
+            {
+                list_customer2 = terk2.get_customer(agent_id.id.ToString(),type);
+            }
+            else
+            {
+                list_customer2 = terk2.get_customer(agent_id.id.ToString());
+            }
+                string numm = "";
             foreach (var value in list_customer2)
             {
                 if (String.IsNullOrEmpty(value.catagory)) 

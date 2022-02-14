@@ -51,6 +51,7 @@ namespace web_NIN.Models
         public string customer_id { get; set; }
         public string replace { get; set; }
         public string status_t { get; set; }
-
+        public string b_original { get; set; }
+        public string b_new { get; set; }
     }
 }

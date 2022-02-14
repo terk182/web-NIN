@@ -64,7 +64,9 @@ namespace web_NIN.Services
                                                     child_name_4,
                                                     birthDate_4,
                                                     result_bday_th_4,
-                                                    child_gender_4
+                                                    child_gender_4,
+                                                    birthDate_original_date,
+                                                    birthDate_new_date      
                                                     )
                                                     values ( 
                                                     @create_operator_name,
@@ -110,7 +112,9 @@ namespace web_NIN.Services
                                                     @child_name_4,
                                                     @birthDate_4,
                                                     @result_bday_th_4,
-                                                    @child_gender_4
+                                                    @child_gender_4,
+                                                    @birthDate_original_date,
+                                                    @birthDate_new_date  
                                                     )";
                 command = new SqlCommand(sql, sqlconn);
 
@@ -158,7 +162,8 @@ namespace web_NIN.Services
                 command.Parameters.AddWithValue("@birthDate_4", mom_model.birthDate_4);
                 command.Parameters.AddWithValue("@result_bday_th_4", mom_model.birthDate_4);
                 command.Parameters.AddWithValue("@child_gender_4", mom_model.child_gender_4);
-
+                command.Parameters.AddWithValue("@birthDate_original_date", mom_model.b_original);
+                command.Parameters.AddWithValue("@birthDate_new_date", mom_model.b_new);
 
                 sqlconn.Open();
                 command.ExecuteNonQuery();

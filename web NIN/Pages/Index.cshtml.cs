@@ -118,7 +118,7 @@ namespace web_NIN.Pages
                     }
                     else
                     {
-                        return RedirectToPage("Main");
+                        return RedirectToPage("project");
                     }
                     
                 }

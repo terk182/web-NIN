@@ -19,9 +19,10 @@ namespace web_NIN.Pages
         public string customer_idd = "";
 
 
-        public IActionResult OnGet(int id, string tel, string replace, string st)
+        public IActionResult OnGet(int id, string tel, string replace, string st,string type)
         {
             var login_status = "";
+            ViewData["type"] = type;
             ViewData["st"] = st;
             ViewData["replace"] = replace;
             ViewData["mom_id"] = id.ToString();
@@ -82,6 +83,7 @@ namespace web_NIN.Pages
                 int result_ = result - 543;
                 // int result_ = result;
                 var date_convent = date_sub[0] + "/" + date_sub[1] + "/" + result_.ToString();
+                var date_convent_t = result_.ToString() +"-"+date_sub[1] + "-" + date_sub[0]  ;
                 var mmmm = Int32.Parse(date_sub[0]);
                 var mmmm2 = Int32.Parse(date_sub[1]);
                 var m_txt = "";
@@ -103,6 +105,7 @@ namespace web_NIN.Pages
                     m_txt2 = mmmm2.ToString();
                 }
                 var date_convent_1 = result_.ToString() + m_txt2 + m_txt;
+                var date_convent_11 = result_.ToString()+"-" + m_txt2 +"-"+ m_txt;
                 //var DATE = Convert.ToDateTime(date_convent);
 
 
@@ -110,6 +113,7 @@ namespace web_NIN.Pages
                 if (result > 2500)
                 {
                     ViewData["Child_birthdate"] = date_convent;
+                    ViewData["Child_birthdate1"] = date_convent_11;
                 }
                 else
                 {

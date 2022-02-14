@@ -1,0 +1,82 @@
+﻿@page
+@model web_NIN.Pages.projectModel
+@{
+
+}
+<style>
+    body {
+        background-color: #fafafa;
+    }
+
+    button {
+        margin: 10px;
+    }
+
+    .btn {
+        display: block;
+        margin: 1.25rem auto;
+    }
+
+    .container_terk {
+        margin: 150px auto;
+        max-width: 640px;
+    }
+</style>
+
+<div class="container_terk">
+
+    <a href="Main?type=mom" id="my-button-1" class="btn btn-primary">กลุ่มคุณแม่ตั้งครรภ์</a>
+    <a href="Main?type=baby" id="my-button-3" class="btn btn-info">กลุ่มคุณแม่คลอดแล้ว</a>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#my-button-1').waitableButton({
+            onClick: function () {
+                return fakeAjax('done', 1000);
+            },
+            doneClass: 'btn btn-success',
+            doneText: 'Done',
+            disabledOnDone: true
+        });
+
+        $('#my-button-2').waitableButton({
+            onClick: function () {
+                return fakeAjax('fail', 1000);
+            },
+            failClass: 'btn btn-danger',
+            failText: 'Error! Try Again'
+        });
+
+        $('#my-button-3').waitableButton({
+            onClick: function () {
+                return false;
+            },
+        });
+
+        $('#my-button-2').waitableButton('promise')
+            .done(function () {
+                console.log('done');
+            })
+            .fail(function () {
+                console.log('fail');
+            })
+            .always(function () {
+                console.log('always');
+            });
+    });
+</script>
+
+<script type="text/javascript">
+
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-36251023-1']);
+    _gaq.push(['_setDomainName', 'jqueryscript.net']);
+    _gaq.push(['_trackPageview']);
+
+    (function () {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+
+</script>

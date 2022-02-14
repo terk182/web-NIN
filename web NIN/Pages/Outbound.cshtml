@@ -23,8 +23,9 @@
     </div>
     <p id="tel" hidden>@ViewData["tel"]</p>
     <p id="mom_id" hidden>@ViewData["mom_id"]</p>
-    <p id="agent" hidden>@ViewData["agent"]</p> 
+    <p id="agent" hidden>@ViewData["agent"]</p>
     <p id="st" hidden>@ViewData["st"]</p>
+    <p id="type" hidden>@ViewData["type"]</p>
     <div class="card-body">
 
 
@@ -963,6 +964,7 @@
 <p id="result_st_bond" hidden></p>
 <p id="result_old_bond" hidden>@ViewData["Child_age"]</p>
 <p id="result_bondday" hidden>@ViewData["Child_birthdate"]</p>
+<p id="result_bondday1" hidden>@ViewData["Child_birthdate1"]</p>
 <p id="result_bond_age" hidden>@ViewData["bond_age"]</p>
 <p id="result_bond_age_new" hidden></p>
 <p id="result_st_babyage" hidden></p>
@@ -1379,12 +1381,22 @@
             let exampleModalLongTitle = document.getElementById("exampleModalLongTitle");
             result_st_call.innerHTML = command;
             exampleModalLongTitle.innerHTML = command;
+
+            let check_type = document.getElementById("type").innerHTML;
+            
             switch (command) {
                 case "Call":
                     // $('#exampleModalCenter').modal('show');
-                    mom_div.style.display = "block";
-                    terk_u.style.display = "block";
-                    call_agent.style.display = "none";
+                   
+                    if (check_type == "baby") {
+                        given_birth_div.style.display = "block";
+                        mom_div.style.display = "none";
+                    }
+                    else {
+                        mom_div.style.display = "block";
+                        terk_u.style.display = "block";
+                        call_agent.style.display = "none";
+                    }
                     //  insert_log("Call", "terk1", mom_id);
                     break;
                 case "Not Available":
@@ -1644,7 +1656,7 @@
                         $('input:hidden[name="__RequestVerificationToken"]').val());
                 },
                 success: function (datas) {
-                    alert(datas);
+                   // alert(datas);
                  
                     result_age.value = datas;
                     result_total_babyage.innerHTML = datas;
@@ -2109,6 +2121,7 @@
         function insert_log(status, action, mom_id, next) {
             let replace = document.getElementById("replace").innerHTML;
             let agent = document.getElementById("agent");
+            let check_type = document.getElementById("type").innerHTML;
             $.ajax({
                 type: 'GET',
                 url: "/Outbound?handler=Insertlog",
@@ -2127,7 +2140,7 @@
                 },
                 success: function (datas) {
                     alert("บันทึกข้อมูลสำเร็จ")
-                    window.location.href = "Main?agent=" + agent.innerHTML;
+                    window.location.href = "Main?agent=" + agent.innerHTML + "&type=" + check_type;
 
                 }
             });
@@ -2541,7 +2554,7 @@
             let no_information = document.getElementById("no_information").innerHTML;
             let no_information_add = document.getElementById("no_information_add").innerHTML;
             let cancel_subscription = document.getElementById("cancel_subscription").innerHTML;
-
+            let check_type = document.getElementById("type").innerHTML;
             let replace_no = parseInt(replace);
             let st_text = "";
             switch (num_tt) {
@@ -2598,7 +2611,7 @@
 
 
                     bt_toggle = true;
-                    window.location.href = "Main?agent=" + agent.innerHTML;
+                    window.location.href = "Main?agent=" + agent.innerHTML+"&type=" + check_type;;
                 });
         }
         function save_esult() {
@@ -2985,9 +2998,9 @@
 
                 //-----------------------------------------------------------
 
+                let check_type = document.getElementById("type").innerHTML;
 
-
-                if (result_st_bond === "") {
+                if (result_st_bond === "" && check_type != "baby" ) {
                     alert("กรุณารอกข้อมูล");
                 }
                 else {
@@ -3042,6 +3055,8 @@
                         'customer_id': cus_id,
                         'replace': replace,
                         'status_t': as_status,
+                        'b_original': document.getElementById('result_bondday1').innerHTML,
+                        'b_new': document.getElementById('result_st_babyage').innerHTML,
                         
                     };
 
@@ -3071,7 +3086,7 @@
 
 
                                     bt_toggle = true;
-                                   window.location.href = "Main?agent=" + agent.innerHTML;
+                            window.location.href = "Main?agent=" + agent.innerHTML + "&type=" + check_type;
                         });
                         //$.ajax({
                         //    type: 'GET',
